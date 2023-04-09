@@ -1,4 +1,4 @@
-package com.webapp.app_rest_api.service;
+package com.webapp.app_rest_api.service.impl;
 
 import com.webapp.app_rest_api.exception.ResourceNotFoundException;
 import com.webapp.app_rest_api.model.Post;
@@ -6,13 +6,9 @@ import com.webapp.app_rest_api.repository.PostRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import java.awt.print.Pageable;
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 

@@ -1,10 +1,9 @@
 package com.webapp.app_rest_api.repository;
 
-import com.webapp.app_rest_api.model.Post;
+import com.webapp.app_rest_api.model.Recipe;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PostRepository extends JpaRepository<Post, Long> {
-
+public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 }

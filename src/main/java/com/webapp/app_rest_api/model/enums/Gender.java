@@ -1,5 +1,5 @@
-package com.webapp.app_rest_api.model;
+package com.webapp.app_rest_api.model.enums;
 
-public enum EUser {
+public enum Gender {
     WOMAN, MAN
 }
