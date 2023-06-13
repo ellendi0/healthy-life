@@ -55,6 +55,19 @@ public class RecipeService implements IRecipeService {
     }
 
     @Override
+    public Recipe countNutritiousFromRecipeForWeight(Recipe recipe, double weight) {
+        Recipe recipeWithGivenWeight = new Recipe();
+
+        recipeWithGivenWeight.setNumberOfCalories(recipe.getNumberOfCalories() * weight / recipe.getWeight());
+        recipeWithGivenWeight.setNumberOfProtein(recipe.getNumberOfProtein() * weight / recipe.getWeight());
+        recipeWithGivenWeight.setNumberOfFat(recipe.getNumberOfFat() * weight / recipe.getWeight());
+        recipeWithGivenWeight.setNumberOfCarbohydrate(recipe.getNumberOfCarbohydrate() * weight / recipe.getWeight());
+        recipeWithGivenWeight.setWeight(weight);
+
+        return recipeWithGivenWeight;
+    }
+
+    @Override
     public Recipe getRecipeById(long id) {
         return recipeRepository.findById(id).orElseThrow(()
                 -> new ResourceNotFoundException("Recipe", "id", String.valueOf(id)));
@@ -85,23 +98,4 @@ public class RecipeService implements IRecipeService {
         return "Recipe deleted successfully";
     }
 
-//    @Override
-//    public Recipe updateListOfFood(long idRecipe, long idFood, double weight) {
-//        Recipe recipe = recipeRepository.findById(idRecipe).orElseThrow(()
-//                -> new ResourceNotFoundException("Recipe", "id", String.valueOf(idRecipe)));
-//        Food food = foodService.getFoodWithGivenWeight(idFood, weight);
-//        recipe.getFoodRecipes();
-//        return recipeRepository.save(recipe);
-//
-//    }
-
-//    @Override
-//    public void deleteFoodFromRecipe(long id, long foodId) {
-//        Recipe recipe = recipeRepository.findById(id).orElseThrow(()
-//                -> new ResourceNotFoundException("Recipe", "id", String.valueOf(id)));
-//        Food food = foodRepository.findById(foodId).orElseThrow(()
-//                -> new ResourceNotFoundException("Food", "id", String.valueOf(foodId)));
-//        recipe.getFood().remove(food);
-//        recipeRepository.save(recipe);
-//    }
 }

@@ -12,4 +12,5 @@ public interface IRecipeService {
     Recipe updateRecipe(long id, Recipe recipe);
     String deleteRecipe(long id);
     void countNutritiousFromFoodList(Recipe recipe, List<FoodRecipe> foodRecipes);
+    Recipe countNutritiousFromRecipeForWeight(Recipe recipe, double weight);
 }

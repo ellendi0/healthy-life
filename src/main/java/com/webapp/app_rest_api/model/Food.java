@@ -1,15 +1,13 @@
 package com.webapp.app_rest_api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.webapp.app_rest_api.model.enums.TypeOfFood;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Data
 @Entity
@@ -51,20 +49,29 @@ public class Food {
     @Column
     private double numberOfFiber;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "meal_food",
-            joinColumns = {@JoinColumn(name = "food_id")},
-            inverseJoinColumns = {@JoinColumn(name = "meal_id")})
+    @JsonIgnore
+    @ManyToMany(mappedBy = "food")
     private Set<Meal> meals = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+    })
     @JoinTable(
-            name = "recipe_food",
+            name = "food_recipe",
             joinColumns = {@JoinColumn(name = "food_id")},
             inverseJoinColumns = {@JoinColumn(name = "recipe_id")})
     private List<Recipe> recipe = new ArrayList<>();
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Food food)) return false;
+        return name.equals(food.name);
+    }
 
-
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
+    }
 }

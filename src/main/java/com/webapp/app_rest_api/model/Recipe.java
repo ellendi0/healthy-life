@@ -1,5 +1,6 @@
 package com.webapp.app_rest_api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -37,6 +38,12 @@ public class Recipe {
     @Column
     private double numberOfFiber;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "recipe")
     private List<Food> foods = new ArrayList<>();
+
+    @JsonIgnore
+    @ManyToMany(mappedBy = "recipe")
+    private List<Meal> meals = new ArrayList<>();
+
 }

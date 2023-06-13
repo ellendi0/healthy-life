@@ -13,6 +13,6 @@ public class DataImportRunner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         String csvFilePath = "D:\\itrytostudy\\spring learning\\HealthyLife\\healthy-life-rest-api\\food_data.csv";
-      //  foodService.saveDataFromCsv(csvFilePath);
+//        foodService.saveDataFromCsv(csvFilePath);
     }
 }
