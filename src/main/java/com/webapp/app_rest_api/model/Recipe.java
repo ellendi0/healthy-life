@@ -7,11 +7,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-@Data
 @Entity
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "recipe")
@@ -39,11 +38,23 @@ public class Recipe {
     private double numberOfFiber;
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "recipe")
-    private List<Food> foods = new ArrayList<>();
+    @OneToMany(mappedBy = "recipe")
+    private Set<FoodToRecipe> food = new HashSet<>();
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "recipe")
-    private List<Meal> meals = new ArrayList<>();
+    @OneToMany(mappedBy = "recipe")
+    private Set<RecipeToMeal> meal = new HashSet<>();
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Recipe)) return false;
+        Recipe recipe = (Recipe) o;
+        return Objects.equals(id, recipe.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

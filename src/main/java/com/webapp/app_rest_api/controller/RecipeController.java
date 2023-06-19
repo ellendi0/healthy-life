@@ -1,9 +1,7 @@
 package com.webapp.app_rest_api.controller;
 
-import com.webapp.app_rest_api.model.Food;
-import com.webapp.app_rest_api.model.FoodRecipe;
+import com.webapp.app_rest_api.dto.RecipeDto;
 import com.webapp.app_rest_api.model.Recipe;
-import com.webapp.app_rest_api.service.IFoodRecipeService;
 import com.webapp.app_rest_api.service.IRecipeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,57 +14,50 @@ import java.util.List;
 public class RecipeController {
 
     private IRecipeService iRecipeService;
-    private IFoodRecipeService iFoodRecipeService;
 
-    public RecipeController(IRecipeService iRecipeService, IFoodRecipeService iFoodRecipeService) {
+    public RecipeController(IRecipeService iRecipeService) {
         this.iRecipeService = iRecipeService;
-        this.iFoodRecipeService = iFoodRecipeService;
     }
 
-    @GetMapping({"/{idRecipe}"})
-    public ResponseEntity<Recipe> getRecipeById(@PathVariable long idRecipe) {
-        return new ResponseEntity<>(iRecipeService.getRecipeById(idRecipe), HttpStatus.OK);
+    @GetMapping({"/{id}"})
+    public ResponseEntity<RecipeDto> getRecipeById(@PathVariable long id) {
+        return new ResponseEntity<>(iRecipeService.getRecipeById(id), HttpStatus.OK);
     }
 
     @GetMapping
-    public ResponseEntity<List<Recipe>> getAllRecipe() {
+    public ResponseEntity<List<RecipeDto>> getAllRecipe() {
         return new ResponseEntity<>(iRecipeService.getAllRecipe(), HttpStatus.OK);
     }
 
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<Recipe> createRecipe(@RequestBody Recipe recipe) {
         return new ResponseEntity<>(iRecipeService.createRecipe(recipe), HttpStatus.CREATED);
     }
 
-    @PutMapping({"/{idRecipe}"})
-    public ResponseEntity<Recipe> updateRecipe(@PathVariable long idRecipe, @RequestBody Recipe recipe) {
-        return new ResponseEntity<>(iRecipeService.updateRecipe(idRecipe, recipe), HttpStatus.OK);
+    @PutMapping({"/{id}"})
+    public ResponseEntity<RecipeDto> updateRecipe(@PathVariable long id, @RequestBody RecipeDto recipeDto) {
+        return new ResponseEntity<>(iRecipeService.updateRecipe(id, recipeDto), HttpStatus.OK);
     }
 
-    @DeleteMapping({"/{idRecipe}"})
-    public ResponseEntity<String> deleteRecipe(@PathVariable long idRecipe) {
-        iRecipeService.deleteRecipe(idRecipe);
+    @DeleteMapping({"/{id}"})
+    public ResponseEntity<String> deleteRecipe(@PathVariable long id) {
+        iRecipeService.deleteRecipe(id);
         return new ResponseEntity<>("The recipe is successfully deleted", HttpStatus.OK);
     }
 
-    @PostMapping({"/{idRecipe}/food/{idFood}"})
-    public ResponseEntity<FoodRecipe> addFoodToRecipe(@PathVariable long idRecipe, @PathVariable long idFood, @RequestBody FoodRecipe foodRecipe) {
-        return new ResponseEntity<>(iFoodRecipeService.addFoodToRecipe(idRecipe, idFood, foodRecipe.getWeight()), HttpStatus.OK);
+    @PostMapping({"/{id}/food/{idFood}/{weight}"})
+    public ResponseEntity<RecipeDto> addFoodToRecipe(@PathVariable long id, @PathVariable long idFood, @PathVariable double weight) {
+        return new ResponseEntity<>(iRecipeService.addFoodToRecipe(id, idFood, weight), HttpStatus.OK);
     }
 
-    @GetMapping({"/{idRecipe}/food"})
-    public ResponseEntity<List<Food>> getAllFoodFromRecipe(@PathVariable long idRecipe) {
-        return new ResponseEntity<>(iFoodRecipeService.getAllFoodFromRecipe(idRecipe), HttpStatus.OK);
+    @PutMapping({"/{id}/recipe/{idFood}/{weight}"})
+    public ResponseEntity<RecipeDto> updateFoodInRecipe(@PathVariable long id, @PathVariable long idFood, @PathVariable double weight) {
+        return new ResponseEntity<>(iRecipeService.updateFoodInRecipe(id, idFood, weight), HttpStatus.OK);
     }
 
-    @DeleteMapping({"/{idRecipe}/food/{idFood}"})
-    public ResponseEntity<String> deleteFoodFromRecipe(@PathVariable long idRecipe, @PathVariable long idFood) {
-        iFoodRecipeService.deleteFoodFromRecipe(idRecipe, idFood);
+    @DeleteMapping({"/{id}/food/{idFood}"})
+    public ResponseEntity<String> deleteFoodFromRecipe(@PathVariable long id, @PathVariable long idFood) {
+        iRecipeService.deleteFoodFromRecipe(id, idFood);
         return new ResponseEntity<>("The food is successfully deleted", HttpStatus.OK);
-    }
-
-    @PutMapping({"/{idRecipe}/food/{idFood}"})
-    public ResponseEntity<FoodRecipe> changeFoodWeight(@PathVariable long idRecipe, @PathVariable long idFood, @RequestBody FoodRecipe foodRecipe){
-        return new ResponseEntity<>(iFoodRecipeService.changeFoodWeight(idRecipe, idFood, foodRecipe.getWeight()), HttpStatus.OK);
     }
 }

@@ -1,5 +1,6 @@
 package com.webapp.app_rest_api.controller;
 
+import com.webapp.app_rest_api.dto.FoodDto;
 import com.webapp.app_rest_api.model.Food;
 import com.webapp.app_rest_api.service.IFoodService;
 import org.springframework.http.HttpStatus;
@@ -20,12 +21,12 @@ public class FoodController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Food> getFoodById(@PathVariable long id){
+    public ResponseEntity<FoodDto> getFoodById(@PathVariable long id){
         return new ResponseEntity<>(iFoodService.getFoodById(id), HttpStatus.OK);
     }
 
     @GetMapping
-    public ResponseEntity<List<Food>> getAllFood(){
+    public ResponseEntity<List<FoodDto>> getAllFood(){
         return new ResponseEntity<>(iFoodService.getAllFood(), HttpStatus.OK);
     }
 

@@ -3,11 +3,15 @@ package com.webapp.app_rest_api.service.impl;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.exceptions.CsvValidationException;
+import com.webapp.app_rest_api.dto.FoodDto;
 import com.webapp.app_rest_api.exception.ResourceNotFoundException;
+import com.webapp.app_rest_api.mapper.FoodMapper;
 import com.webapp.app_rest_api.model.Food;
+import com.webapp.app_rest_api.model.Meal;
 import com.webapp.app_rest_api.model.enums.TypeOfFood;
 import com.webapp.app_rest_api.repository.FoodRepository;
 import com.webapp.app_rest_api.service.IFoodService;
+import org.decimal4j.util.DoubleRounder;
 import org.springframework.stereotype.Service;
 
 import java.io.FileReader;
@@ -18,19 +22,21 @@ import java.util.List;
 public class FoodService implements IFoodService {
 
     private FoodRepository foodRepository;
+    private FoodMapper mapper;
 
-    public FoodService(FoodRepository foodRepository) {
+    public FoodService(FoodRepository foodRepository, FoodMapper mapper) {
         this.foodRepository = foodRepository;
+        this.mapper = mapper;
     }
 
     @Override
-    public Food getFoodById(long id) {
-        return foodRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Food", "id", String.valueOf(id)));
+    public FoodDto getFoodById(long id) {
+        return mapper.mapToDto(foodRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Food", "id", String.valueOf(id))));
     }
 
     @Override
-    public List<Food> getAllFood() {
-        return foodRepository.findAll();
+    public List<FoodDto> getAllFood() {
+        return foodRepository.findAll().stream().map(mapper::mapToDto).toList();
     }
 
     @Override
@@ -40,18 +46,17 @@ public class FoodService implements IFoodService {
 
     @Override
     public Food updateFood(long id, Food food) {
-        Food updatedFood = foodRepository.findById(id).orElseThrow(()
+        Food foodUpdated = foodRepository.findById(id).orElseThrow(()
                 -> new ResourceNotFoundException("Food", "id", String.valueOf(id)));
-        updatedFood.setName(food.getName());
-        updatedFood.setTypeOfFood(food.getTypeOfFood());
-        updatedFood.setNumberOfFat(food.getNumberOfFat());
-        updatedFood.setNumberOfCarbohydrate(food.getNumberOfCarbohydrate());
-        updatedFood.setNumberOfProtein(food.getNumberOfProtein());
-        updatedFood.setNumberOfCalories(food.getNumberOfCalories());
-        updatedFood.setNumberOfSugar(food.getNumberOfSugar());
-        updatedFood.setNumberOfFiber(food.getNumberOfFiber());
-
-        return foodRepository.save(updatedFood);
+        foodUpdated.setName(foodUpdated.getName());
+        foodUpdated.setTypeOfFood(foodUpdated.getTypeOfFood());
+        foodUpdated.setNumberOfFat(foodUpdated.getNumberOfFat());
+        foodUpdated.setNumberOfCarbohydrate(foodUpdated.getNumberOfCarbohydrate());
+        foodUpdated.setNumberOfProtein(foodUpdated.getNumberOfProtein());
+        foodUpdated.setNumberOfCalories(foodUpdated.getNumberOfCalories());
+        foodUpdated.setNumberOfSugar(foodUpdated.getNumberOfSugar());
+        foodUpdated.setNumberOfFiber(foodUpdated.getNumberOfFiber());
+        return foodRepository.save(foodUpdated);
     }
 
     @Override
@@ -60,19 +65,20 @@ public class FoodService implements IFoodService {
     }
 
     @Override
-    public Food getFoodWithGivenWeight(long id, double weight) {
+    public FoodDto getFoodWithGivenWeight(long id, double weight) {
         Food food = foodRepository.findById(id).orElseThrow(()
                 -> new ResourceNotFoundException("Food", "id", String.valueOf(id)));
-        Food foodWithGivenWeight = new Food();
+        FoodDto foodWithGivenWeight = mapper.mapToDto(food);
+        foodWithGivenWeight.setId(food.getId());
         foodWithGivenWeight.setName(food.getName());
         foodWithGivenWeight.setTypeOfFood(food.getTypeOfFood());
         foodWithGivenWeight.setWeight(weight);
-        foodWithGivenWeight.setNumberOfCalories(food.getNumberOfCalories() * weight / 100);
-        foodWithGivenWeight.setNumberOfFat(food.getNumberOfFat() * weight / 100);
-        foodWithGivenWeight.setNumberOfCarbohydrate(food.getNumberOfCarbohydrate() * weight / 100);
-        foodWithGivenWeight.setNumberOfProtein(food.getNumberOfProtein() * weight / 100);
-        foodWithGivenWeight.setNumberOfSugar(food.getNumberOfSugar() * weight / 100);
-        foodWithGivenWeight.setNumberOfFiber(food.getNumberOfFiber() * weight / 100);
+        foodWithGivenWeight.setNumberOfCalories(DoubleRounder.round(food.getNumberOfCalories() * weight / 100, 3));
+        foodWithGivenWeight.setNumberOfFat(DoubleRounder.round(food.getNumberOfFat() * weight / 100, 3));
+        foodWithGivenWeight.setNumberOfCarbohydrate(DoubleRounder.round(food.getNumberOfCarbohydrate() * weight / 100, 3));
+        foodWithGivenWeight.setNumberOfProtein(DoubleRounder.round(food.getNumberOfProtein() * weight / 100, 3));
+        foodWithGivenWeight.setNumberOfSugar(DoubleRounder.round(food.getNumberOfSugar() * weight / 100, 3));
+        foodWithGivenWeight.setNumberOfFiber(DoubleRounder.round(food.getNumberOfFiber() * weight / 100, 3));
         return foodWithGivenWeight;
     }
 
@@ -98,6 +104,4 @@ public class FoodService implements IFoodService {
         csvReader.close();
         fileReader.close();
     }
-
-
 }

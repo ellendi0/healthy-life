@@ -1,6 +1,7 @@
 package com.webapp.app_rest_api.controller;
 
 
+import com.webapp.app_rest_api.dto.PostDto;
 import com.webapp.app_rest_api.model.Post;
 import com.webapp.app_rest_api.service.IPostService;
 import org.springframework.http.HttpStatus;
@@ -18,16 +19,14 @@ public class PostController {
         this.IPostService = IPostService;
     }
 
-
     @GetMapping("/{id}")
     public ResponseEntity<Post> getPostById(@PathVariable long id){
         return new ResponseEntity<>(IPostService.getPost(id), HttpStatus.OK);
     }
 
     @GetMapping
-    public ResponseEntity<List<Post>> getAllPost(@RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
-                                                 @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize){
-        return new ResponseEntity<>(IPostService.getAllPost(pageNo, pageSize ), HttpStatus.OK);
+    public ResponseEntity<List<Post>> getAllPost(){
+        return new ResponseEntity<>(IPostService.getAllPost( ), HttpStatus.OK);
     }
 
     @PostMapping
@@ -44,5 +43,11 @@ public class PostController {
     public ResponseEntity<String> deletePost(@PathVariable long id){
         IPostService.deletePost(id);
         return new ResponseEntity<>("The post is successfully deleted", HttpStatus.OK);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<String> deleteAllPost(){
+        IPostService.deleteAllPost();
+        return new ResponseEntity<>("All posts are successfully deleted", HttpStatus.OK);
     }
 }

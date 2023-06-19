@@ -12,11 +12,10 @@ import java.util.*;
 @Data
 @Entity
 @AllArgsConstructor
-
 @NoArgsConstructor
 @Table(name = "food")
 
-public class Food {
+public class Food{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -50,28 +49,23 @@ public class Food {
     private double numberOfFiber;
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "food")
-    private Set<Meal> meals = new HashSet<>();
+    @OneToMany(mappedBy = "food")
+    private Set<FoodToMeal> meal = new HashSet<>();
 
-    @ManyToMany(cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE
-    })
-    @JoinTable(
-            name = "food_recipe",
-            joinColumns = {@JoinColumn(name = "food_id")},
-            inverseJoinColumns = {@JoinColumn(name = "recipe_id")})
-    private List<Recipe> recipe = new ArrayList<>();
+    @JsonIgnore
+    @OneToMany(mappedBy = "food")
+    private Set<FoodToRecipe> recipe = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Food food)) return false;
-        return name.equals(food.name);
+        if (!(o instanceof Food)) return false;
+        Food food = (Food) o;
+        return Objects.equals(id, food.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name);
+        return Objects.hash(id);
     }
 }
