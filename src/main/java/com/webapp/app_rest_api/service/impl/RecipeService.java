@@ -112,17 +112,22 @@ public class RecipeService implements IRecipeService {
         recipeRepository.deleteById(id);
     }
 
+    @Transactional
     @Override
     public void deleteFoodFromRecipe(long recipeId, long foodId) {
         Recipe recipe = recipeRepository.findById(recipeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Recipe", "id", String.valueOf(recipeId)));
 
-        Food food = foodRepository.findById(foodId)
-                .orElseThrow(() -> new ResourceNotFoundException("Food", "id", String.valueOf(foodId)));
+        Food food = recipe.getFood().stream().map(FoodToRecipe::getFood)
+                        .filter(f -> f.getId().equals(foodId))
+                        .findFirst()
+                        .orElseThrow(() -> new ResourceNotFoundException("Food in Recipe", "id", String.valueOf(foodId)));
 
         recipe.getFood().removeIf(f -> f.getFood().getId().equals(foodId));
         food.getRecipe().removeIf(r -> r.getRecipe().getId().equals(recipeId));
+        foodToRecipeRepository.deleteByRecipeIdAndFoodId(recipeId, foodId);
         recipeRepository.save(recipe);
+
         countNutritiousFromFoodList(recipeMapper.mapToDto(recipe));
     }
 

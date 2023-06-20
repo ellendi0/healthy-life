@@ -46,17 +46,17 @@ public class MealController {
         return new ResponseEntity<>(iMealService.addRecipeToMeal(mealId, recipeId, weight), HttpStatus.OK);
     }
 
-    @PutMapping("/{mealId}/change/{recipeId}/{weight}")
+    @PutMapping("/{mealId}/changerecipe/{recipeId}/{weight}")
     public ResponseEntity<MealDto> changeRecipeInMeal(@PathVariable long mealId, @PathVariable long recipeId, @PathVariable double weight){
         return new ResponseEntity<>(iMealService.updateRecipeInMeal(mealId, recipeId, weight), HttpStatus.OK);
     }
 
-    @PutMapping("/{mealId}/change/{foodId}/{weight}")
+    @PutMapping("/{mealId}/changefood/{foodId}/{weight}")
     public ResponseEntity<MealDto> changeFoodInMeal(@PathVariable long mealId, @PathVariable long foodId, @PathVariable double weight){
         return new ResponseEntity<>(iMealService.updateFoodInMeal(mealId, foodId, weight), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{mealId}/delete/{recipeId}")
+    @DeleteMapping("/{mealId}/deleterecipe/{recipeId}")
     public ResponseEntity<String> deleteRecipeFromMeal(@PathVariable long mealId, @PathVariable long recipeId){
         iMealService.deleteRecipeFromMeal(mealId, recipeId);
         return new ResponseEntity<>("The recipe is successfully deleted", HttpStatus.OK);

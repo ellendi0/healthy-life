@@ -88,8 +88,8 @@ public class MealService implements IMealService {
             mealDto.getFood().removeIf(f -> f.getId().equals(foodId));
             mealDto.getFood().add(iFoodService.getFoodWithGivenWeight(foodId, foodToMeal.getWeight()));
         }
-
         mealRepository.save(meal);
+        countNutritiousFromFoodList(mealId);
         return mealDto;
     }
 
@@ -123,7 +123,7 @@ public class MealService implements IMealService {
             mealDto.getRecipes().add(iRecipeService.getRecipeWithGivenWeight(recipeId, recipeToMeal.getWeight()));
         }
         mealRepository.save(meal);
-        countNutritiousFromFoodList(mealDto);
+        countNutritiousFromFoodList(mealId);
         return mealDto;
     }
 
@@ -138,7 +138,7 @@ public class MealService implements IMealService {
         assert foodDto != null;
         mealDto.getFood().remove(foodDto);
         mealDto.getFood().add(iFoodService.getFoodWithGivenWeight(foodId, weight));
-        countNutritiousFromFoodList(mealDto);
+        countNutritiousFromFoodList(mealId);
         return mealDto;
     }
 
@@ -153,36 +153,46 @@ public class MealService implements IMealService {
         assert recipeDto != null;
         mealDto.getRecipes().remove(recipeDto);
         mealDto.getRecipes().add(iRecipeService.getRecipeWithGivenWeight(recipeId, weight));
-        countNutritiousFromFoodList(mealDto);
+        countNutritiousFromFoodList(mealId);
         return mealDto;
     }
 
+    @Transactional
     @Override
     public void deleteFoodFromMeal(long mealId, long foodId) {
         Meal meal = mealRepository.findById(mealId)
                 .orElseThrow(() -> new ResourceNotFoundException("Meal", "id", String.valueOf(mealId)));
 
-        Food food = foodRepository.findById(foodId)
-                .orElseThrow(() -> new ResourceNotFoundException("Food", "id", String.valueOf(foodId)));
+        Food food = meal.getFood().stream().map(FoodToMeal::getFood)
+                .filter(f -> f.getId().equals(foodId))
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("Food in Meal", "id", String.valueOf(foodId)));
 
         meal.getFood().removeIf(f -> f.getFood().getId().equals(foodId));
         food.getMeal().removeIf(f -> f.getMeal().getId().equals(mealId));
+        foodToMealRepository.deleteByMealIdAndFoodId(mealId, foodId);
         mealRepository.save(meal);
-        countNutritiousFromFoodList(mealMapper.mapToDto(meal));
+
+        countNutritiousFromFoodList(mealId);
     }
 
+    @Transactional
     @Override
     public void deleteRecipeFromMeal(long mealId, long recipeId) {
         Meal meal = mealRepository.findById(mealId)
                 .orElseThrow(() -> new ResourceNotFoundException("Meal", "id", String.valueOf(mealId)));
 
-        Recipe recipe = recipeRepository.findById(recipeId)
-                .orElseThrow(() -> new ResourceNotFoundException("Recipe", "id", String.valueOf(recipeId)));
+           Recipe recipe = meal.getRecipe().stream().map(RecipeToMeal::getRecipe)
+                .filter(r -> r.getId().equals(recipeId))
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("Recipe in Meal", "id", String.valueOf(recipeId)));
 
         meal.getRecipe().removeIf(r -> r.getRecipe().getId().equals(recipeId));
         recipe.getMeal().removeIf(r -> r.getMeal().getId().equals(mealId));
-        countNutritiousFromFoodList(mealMapper.mapToDto(meal));
+        recipeToMealRepository.deleteByMealIdAndRecipeId(mealId, recipeId);
         mealRepository.save(meal);
+
+        countNutritiousFromFoodList(mealId);
     }
 
     @Override
@@ -197,15 +207,17 @@ public class MealService implements IMealService {
     }
 
     @Override
-    public void countNutritiousFromFoodList(MealDto mealDto) {
+    public void countNutritiousFromFoodList(long mealId) {
         double calories = 0;
         double proteins = 0;
         double fats = 0;
         double carbohydrates = 0;
         double weight = 0;
 
-        Meal meal = mealRepository.findById(mealDto.getId()).orElseThrow(()
-                -> new ResourceNotFoundException("Meal", "id", String.valueOf(mealDto.getId())));
+        Meal meal = mealRepository.findById(mealId).orElseThrow(()
+                -> new ResourceNotFoundException("Meal", "id", String.valueOf(mealId)));
+
+        MealDto mealDto = mealMapper.mapToDto(meal);
 
         if (mealDto.getFood() != null) {
             for (FoodDto foodDto : mealDto.getFood()) {

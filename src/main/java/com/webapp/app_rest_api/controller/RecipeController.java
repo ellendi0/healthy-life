@@ -45,17 +45,17 @@ public class RecipeController {
         return new ResponseEntity<>("The recipe is successfully deleted", HttpStatus.OK);
     }
 
-    @PostMapping({"/{id}/food/{idFood}/{weight}"})
+    @PostMapping({"/{id}/addfood/{idFood}/{weight}"})
     public ResponseEntity<RecipeDto> addFoodToRecipe(@PathVariable long id, @PathVariable long idFood, @PathVariable double weight) {
         return new ResponseEntity<>(iRecipeService.addFoodToRecipe(id, idFood, weight), HttpStatus.OK);
     }
 
-    @PutMapping({"/{id}/recipe/{idFood}/{weight}"})
+    @PutMapping({"/{id}/updaterecipe/{idFood}/{weight}"})
     public ResponseEntity<RecipeDto> updateFoodInRecipe(@PathVariable long id, @PathVariable long idFood, @PathVariable double weight) {
         return new ResponseEntity<>(iRecipeService.updateFoodInRecipe(id, idFood, weight), HttpStatus.OK);
     }
 
-    @DeleteMapping({"/{id}/food/{idFood}"})
+    @DeleteMapping({"/{id}/deletefood/{idFood}"})
     public ResponseEntity<String> deleteFoodFromRecipe(@PathVariable long id, @PathVariable long idFood) {
         iRecipeService.deleteFoodFromRecipe(id, idFood);
         return new ResponseEntity<>("The food is successfully deleted", HttpStatus.OK);

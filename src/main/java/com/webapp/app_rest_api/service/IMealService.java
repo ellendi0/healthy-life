@@ -18,5 +18,5 @@ public interface IMealService {
     void deleteRecipeFromMeal(long mealId, long recipeId);
     void deleteMeal(long mealId);
     void deleteAllMeals();
-    void countNutritiousFromFoodList(MealDto mealDto);
+    void countNutritiousFromFoodList(long mealId);
 }
