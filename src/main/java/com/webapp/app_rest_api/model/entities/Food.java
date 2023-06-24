@@ -1,20 +1,19 @@
-package com.webapp.app_rest_api.model;
+package com.webapp.app_rest_api.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.webapp.app_rest_api.model.enums.TypeOfFood;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.*;
 
-@Data
+@Setter
+@Getter
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "food")
-
+//ставити всюди назви колонок
 public class Food{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,11 +48,11 @@ public class Food{
     private double numberOfFiber;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "food")
+    @OneToMany(mappedBy = "food", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<FoodToMeal> meal = new HashSet<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "food")
+    @OneToMany(mappedBy = "food", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<FoodToRecipe> recipe = new HashSet<>();
 
     @Override
@@ -68,4 +67,22 @@ public class Food{
     public int hashCode() {
         return Objects.hash(id);
     }
+
+    @Override
+    public String toString() {
+        return "Food{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", typeOfFood=" + typeOfFood +
+                ", weight=" + weight +
+                ", numberOfCalories=" + numberOfCalories +
+                ", numberOfProtein=" + numberOfProtein +
+                ", numberOfFat=" + numberOfFat +
+                ", numberOfCarbohydrate=" + numberOfCarbohydrate +
+                ", numberOfSugar=" + numberOfSugar +
+                ", numberOfFiber=" + numberOfFiber +
+                '}';
+    }
+
+    // add custom toString
 }

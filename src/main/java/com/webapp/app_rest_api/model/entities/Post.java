@@ -1,4 +1,4 @@
-package com.webapp.app_rest_api.model;
+package com.webapp.app_rest_api.model.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;

@@ -1,11 +1,8 @@
 package com.webapp.app_rest_api.controller;
 
 
-import com.webapp.app_rest_api.dto.PostDto;
-import com.webapp.app_rest_api.model.Post;
-import com.webapp.app_rest_api.service.IPostService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import com.webapp.app_rest_api.model.entities.Post;
+import com.webapp.app_rest_api.service.impl.PostService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,41 +10,41 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/posts")
 public class PostController {
-    private IPostService IPostService;
+    private PostService postService;
 
-    public PostController(IPostService IPostService) {
-        this.IPostService = IPostService;
+    public PostController(PostService postService) {
+        this.postService = postService;
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Post> getPostById(@PathVariable long id){
-        return new ResponseEntity<>(IPostService.getPost(id), HttpStatus.OK);
+    public Post getPostById(@PathVariable long id){
+        return postService.getPost(id);
     }
 
     @GetMapping
-    public ResponseEntity<List<Post>> getAllPost(){
-        return new ResponseEntity<>(IPostService.getAllPost( ), HttpStatus.OK);
+    public List<Post> getAllPost(){
+        return postService.getAllPost();
     }
 
     @PostMapping
-    public ResponseEntity<Post> createPost(@RequestBody Post post){
-        return new ResponseEntity<>(IPostService.createPost(post), HttpStatus.CREATED);
+    public Post createPost(@RequestBody Post post){
+        return postService.createPost(post);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Post> updatePost(@PathVariable long id, @RequestBody Post post){
-        return new ResponseEntity<>(IPostService.updatePost(id, post), HttpStatus.OK);
+    public Post updatePost(@PathVariable long id, @RequestBody Post post){
+        return postService.updatePost(id, post);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deletePost(@PathVariable long id){
-        IPostService.deletePost(id);
-        return new ResponseEntity<>("The post is successfully deleted", HttpStatus.OK);
+    public String deletePost(@PathVariable long id){
+        postService.deletePost(id);
+        return ("The post is successfully deleted");
     }
 
     @DeleteMapping
-    public ResponseEntity<String> deleteAllPost(){
-        IPostService.deleteAllPost();
-        return new ResponseEntity<>("All posts are successfully deleted", HttpStatus.OK);
+    public String deleteAllPost(){
+        postService.deleteAllPost();
+        return ("All posts are successfully deleted");
     }
 }

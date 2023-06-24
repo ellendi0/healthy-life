@@ -3,14 +3,13 @@ package com.webapp.app_rest_api.service.impl;
 import com.webapp.app_rest_api.dto.FoodDto;
 import com.webapp.app_rest_api.dto.RecipeDto;
 import com.webapp.app_rest_api.exception.ResourceNotFoundException;
-import com.webapp.app_rest_api.mapper.FoodMapper;
-import com.webapp.app_rest_api.mapper.RecipeMapper;
-import com.webapp.app_rest_api.model.*;
+import com.webapp.app_rest_api.model.entities.Food;
+import com.webapp.app_rest_api.model.entities.FoodToRecipe;
+import com.webapp.app_rest_api.model.entities.Recipe;
+import com.webapp.app_rest_api.model.mapper.RecipeMapper;
 import com.webapp.app_rest_api.repository.FoodRepository;
 import com.webapp.app_rest_api.repository.FoodToRecipeRepository;
 import com.webapp.app_rest_api.repository.RecipeRepository;
-import com.webapp.app_rest_api.service.IFoodService;
-import com.webapp.app_rest_api.service.IRecipeService;
 import org.decimal4j.util.DoubleRounder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,119 +18,72 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
-public class RecipeService implements IRecipeService {
+public class RecipeService{
 
     private RecipeRepository recipeRepository;
-    private IFoodService iFoodService;
+    private FoodService foodService;
     private RecipeMapper recipeMapper;
-    private FoodMapper foodMapper;
-    private FoodToRecipeRepository foodToRecipeRepository;
-    private FoodRepository foodRepository;
+    private FoodToRecipeService foodToRecipeService;
 
-    public RecipeService(RecipeRepository recipeRepository, IFoodService iFoodService, RecipeMapper recipeMapper, FoodMapper foodMapper, FoodToRecipeRepository foodToRecipeRepository, FoodRepository foodRepository) {
+    public RecipeService(RecipeRepository recipeRepository, FoodService foodService, RecipeMapper recipeMapper, FoodToRecipeService foodToRecipeService) {
         this.recipeRepository = recipeRepository;
-        this.iFoodService = iFoodService;
+        this.foodService = foodService;
         this.recipeMapper = recipeMapper;
-        this.foodMapper = foodMapper;
-        this.foodToRecipeRepository = foodToRecipeRepository;
-        this.foodRepository = foodRepository;
+        this.foodToRecipeService = foodToRecipeService;
     }
 
-    @Override
-    public RecipeDto getRecipeById(long id) {
-        return recipeMapper.mapToDto(recipeRepository.findById(id).orElseThrow(()
-                -> new ResourceNotFoundException("Recipe", "id", String.valueOf(id))));
+    public Recipe getRecipeById(Long id) {
+        return recipeRepository.findById(id).orElseThrow(()
+                -> new ResourceNotFoundException("Recipe", "id", String.valueOf(id)));
     }
 
-    @Override
-    public List<RecipeDto> getAllRecipe() {
-        return recipeRepository.findAll().stream()
-                .map(recipeMapper::mapToDto)
-                .toList();
+    public List<Recipe> getAllRecipe() {
+        return recipeRepository.findAll();
     }
 
-    @Override
-    public Recipe createRecipe(Recipe recipe) {
+    public Recipe createUpdateRecipe(Recipe recipe) {
         return recipeRepository.save(recipe);
     }
 
-    @Override
     @Transactional
-    public RecipeDto addFoodToRecipe(long recipeId, long foodId, double weight) {
-        Recipe recipe = recipeRepository.findById(recipeId)
-                .orElseThrow(() -> new ResourceNotFoundException("Recipe", "id", String.valueOf(recipeId)));
-
-        RecipeDto recipeDto = recipeMapper.mapToDto(recipe);
-
-        FoodToRecipe foodToRecipe = recipe.getFood().stream()
-                .filter(f -> f.getFood().getId().equals(foodId))
-                .findFirst()
-                .orElse(null);
+    public Recipe addFoodToRecipe(Long recipeId, Long foodId, double weight) {
+        Recipe recipe = getRecipeById(recipeId);
+        FoodToRecipe foodToRecipe = foodToRecipeService.getFoodByRecipeIdAndFoodId(recipeId, foodId);
 
         if(Objects.isNull(foodToRecipe)){
-            Food food = foodRepository.findById(foodId).orElseThrow(()
-                    -> new ResourceNotFoundException("Food", "id", String.valueOf(foodId)));
-
-            FoodToRecipe foodToRecipeNew = new FoodToRecipe(food, recipe, weight);
-
-            recipe.getFood().add(foodToRecipeNew);
-            food.getRecipe().add(foodToRecipeNew);
-            foodToRecipeRepository.save(foodToRecipeNew);
-
-            recipeDto.getFood().add(iFoodService.getFoodWithGivenWeight(foodId, weight));
+            Food food = foodService.getFoodById(foodId);
+            foodToRecipe = new FoodToRecipe(food, recipe, weight);
+            recipe.getFood().add(foodToRecipe);
+            food.getRecipe().add(foodToRecipe);
         }else{
             foodToRecipe.setWeight(foodToRecipe.getWeight() + weight);
-            recipeDto.getFood().removeIf(f -> f.getId().equals(foodId));
-            recipeDto.getFood().add(iFoodService.getFoodWithGivenWeight(foodId, foodToRecipe.getWeight()));
         }
+        foodToRecipeService.createUpdateFoodToRecipe(foodToRecipe);
         recipeRepository.save(recipe);
-        countNutritiousFromFoodList(recipeDto);
-        return recipeDto;
+//        countNutritiousFromFoodList(recipeDto);
+        return recipe;
     }
 
-    @Override
-    public RecipeDto updateRecipe(long recipeId, RecipeDto recipeDto) {
-        Recipe recipe = recipeMapper.mapToEntity(getRecipeById(recipeId));
-        recipe.setName(recipeDto.getName());
-        return recipeMapper.mapToDto(recipeRepository.save(recipe));
+    public Recipe updateRecipe(Long recipeId, Recipe recipe) {
+        Recipe recipeNew = getRecipeById(recipeId);
+        recipeNew.setName(recipeNew.getName());
+        return recipeRepository.save(recipeNew);
     }
 
-    @Override
-    public RecipeDto updateFoodInRecipe(long recipeId, long foodId, double weight) {
-        RecipeDto recipeDto = recipeMapper.mapToDto(recipeRepository.findById(recipeId).
-                orElseThrow(() -> new ResourceNotFoundException("Recipe", "id", String.valueOf(recipeId))));
-
-        recipeDto.getFood().removeIf(f -> f.getId().equals(foodId));
-        recipeDto.getFood().add(iFoodService.getFoodWithGivenWeight(foodId, weight));
-        countNutritiousFromFoodList(recipeDto);
-        return recipeDto;
+    public Recipe updateFoodInRecipe(Long recipeId, Long foodId, Double weight) {
+        foodToRecipeService.updateFoodToRecipe(recipeId, foodId, weight);
+        return getRecipeById(recipeId);
     }
 
-    @Override
-    public void deleteRecipe(long id) {
+    public void deleteRecipe(Long id) {
         recipeRepository.deleteById(id);
     }
 
     @Transactional
-    @Override
-    public void deleteFoodFromRecipe(long recipeId, long foodId) {
-        Recipe recipe = recipeRepository.findById(recipeId)
-                .orElseThrow(() -> new ResourceNotFoundException("Recipe", "id", String.valueOf(recipeId)));
-
-        Food food = recipe.getFood().stream().map(FoodToRecipe::getFood)
-                        .filter(f -> f.getId().equals(foodId))
-                        .findFirst()
-                        .orElseThrow(() -> new ResourceNotFoundException("Food in Recipe", "id", String.valueOf(foodId)));
-
-        recipe.getFood().removeIf(f -> f.getFood().getId().equals(foodId));
-        food.getRecipe().removeIf(r -> r.getRecipe().getId().equals(recipeId));
-        foodToRecipeRepository.deleteByRecipeIdAndFoodId(recipeId, foodId);
-        recipeRepository.save(recipe);
-
-        countNutritiousFromFoodList(recipeMapper.mapToDto(recipe));
+    public void deleteFoodFromRecipe(Long recipeId, Long foodId) {
+        foodToRecipeService.deleteByRecipeIdAndFoodId(recipeId, foodId);
     }
 
-    @Override
     public void countNutritiousFromFoodList(RecipeDto recipeDto) {
         double calories = 0;
         double proteins = 0;
@@ -157,7 +109,6 @@ public class RecipeService implements IRecipeService {
         recipeRepository.save(recipeMapper.mapToEntity(recipeDto));
     }
 
-    @Override
     public RecipeDto getRecipeWithGivenWeight(long recipeId, double weight) {
         Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(()
                 -> new ResourceNotFoundException("Recipe", "id", String.valueOf(recipeId)));

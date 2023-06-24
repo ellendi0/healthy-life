@@ -1,63 +1,62 @@
 package com.webapp.app_rest_api.controller;
 
 import com.webapp.app_rest_api.dto.RecipeDto;
-import com.webapp.app_rest_api.model.Recipe;
-import com.webapp.app_rest_api.service.IRecipeService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import com.webapp.app_rest_api.model.entities.Recipe;
+import com.webapp.app_rest_api.service.impl.RecipeService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+// response<entity> delete
 @RestController
 @RequestMapping("/api/recipe")
 public class RecipeController {
 
-    private IRecipeService iRecipeService;
+    private RecipeService recipeService;
 
-    public RecipeController(IRecipeService iRecipeService) {
-        this.iRecipeService = iRecipeService;
+    public RecipeController(RecipeService recipeService) {
+        this.recipeService = recipeService;
     }
 
     @GetMapping({"/{id}"})
-    public ResponseEntity<RecipeDto> getRecipeById(@PathVariable long id) {
-        return new ResponseEntity<>(iRecipeService.getRecipeById(id), HttpStatus.OK);
+    public Recipe getRecipeById(@PathVariable long id) {
+        return recipeService.getRecipeById(id);
     }
 
     @GetMapping
-    public ResponseEntity<List<RecipeDto>> getAllRecipe() {
-        return new ResponseEntity<>(iRecipeService.getAllRecipe(), HttpStatus.OK);
+    public List<Recipe> getAllRecipe() {
+        return recipeService.getAllRecipe();
     }
 
     @PostMapping
-    public ResponseEntity<Recipe> createRecipe(@RequestBody Recipe recipe) {
-        return new ResponseEntity<>(iRecipeService.createRecipe(recipe), HttpStatus.CREATED);
+    public Recipe createRecipe(@RequestBody Recipe recipe) {
+        return recipeService.createUpdateRecipe(recipe);
     }
 
     @PutMapping({"/{id}"})
-    public ResponseEntity<RecipeDto> updateRecipe(@PathVariable long id, @RequestBody RecipeDto recipeDto) {
-        return new ResponseEntity<>(iRecipeService.updateRecipe(id, recipeDto), HttpStatus.OK);
+    public Recipe updateRecipe(@PathVariable long id, @RequestBody Recipe recipe) {
+        return recipeService.updateRecipe(id, recipe);
     }
 
     @DeleteMapping({"/{id}"})
-    public ResponseEntity<String> deleteRecipe(@PathVariable long id) {
-        iRecipeService.deleteRecipe(id);
-        return new ResponseEntity<>("The recipe is successfully deleted", HttpStatus.OK);
+    public String deleteRecipe(@PathVariable long id) {
+        recipeService.deleteRecipe(id);
+        return "The recipe is successfully deleted";
     }
 
     @PostMapping({"/{id}/addfood/{idFood}/{weight}"})
-    public ResponseEntity<RecipeDto> addFoodToRecipe(@PathVariable long id, @PathVariable long idFood, @PathVariable double weight) {
-        return new ResponseEntity<>(iRecipeService.addFoodToRecipe(id, idFood, weight), HttpStatus.OK);
+    public Recipe addFoodToRecipe(@PathVariable long id, @PathVariable long idFood, @PathVariable double weight) {
+        return recipeService.addFoodToRecipe(id, idFood, weight);
     }
 
     @PutMapping({"/{id}/updaterecipe/{idFood}/{weight}"})
-    public ResponseEntity<RecipeDto> updateFoodInRecipe(@PathVariable long id, @PathVariable long idFood, @PathVariable double weight) {
-        return new ResponseEntity<>(iRecipeService.updateFoodInRecipe(id, idFood, weight), HttpStatus.OK);
+    public Recipe updateFoodInRecipe(@PathVariable long id, @PathVariable long idFood, @PathVariable double weight) {
+        return recipeService.updateFoodInRecipe(id, idFood, weight);
     }
 
     @DeleteMapping({"/{id}/deletefood/{idFood}"})
-    public ResponseEntity<String> deleteFoodFromRecipe(@PathVariable long id, @PathVariable long idFood) {
-        iRecipeService.deleteFoodFromRecipe(id, idFood);
-        return new ResponseEntity<>("The food is successfully deleted", HttpStatus.OK);
+    public String deleteFoodFromRecipe(@PathVariable long id, @PathVariable long idFood) {
+        recipeService.deleteFoodFromRecipe(id, idFood);
+        return "The food is successfully deleted";
     }
 }

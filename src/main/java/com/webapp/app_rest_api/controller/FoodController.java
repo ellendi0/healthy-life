@@ -1,10 +1,8 @@
 package com.webapp.app_rest_api.controller;
 
 import com.webapp.app_rest_api.dto.FoodDto;
-import com.webapp.app_rest_api.model.Food;
-import com.webapp.app_rest_api.service.IFoodService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import com.webapp.app_rest_api.model.entities.Food;
+import com.webapp.app_rest_api.service.impl.FoodService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,36 +12,35 @@ import java.util.List;
 @RequestMapping("api/food")
 public class FoodController {
 
-    private final IFoodService iFoodService;
-
-    public FoodController(IFoodService iFoodService) {
-        this.iFoodService = iFoodService;
+    private final FoodService foodService;
+    public FoodController(FoodService foodService){
+        this.foodService = foodService;
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<FoodDto> getFoodById(@PathVariable long id){
-        return new ResponseEntity<>(iFoodService.getFoodById(id), HttpStatus.OK);
+    public Food getFoodById(@PathVariable long id){
+        return foodService.getFoodById(id);
     }
 
     @GetMapping
-    public ResponseEntity<List<FoodDto>> getAllFood(){
-        return new ResponseEntity<>(iFoodService.getAllFood(), HttpStatus.OK);
+    public List<Food> getAllFood(){
+        return foodService.getAllFood();
     }
 
     @PostMapping
-    public ResponseEntity<Food> postFood(@RequestBody Food food){
-        return new ResponseEntity<>(iFoodService.createFood(food), HttpStatus.CREATED);
+    public Food postFood(@RequestBody Food food){
+        return foodService.createFood(food);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Food> updateFood(@PathVariable long id, @RequestBody Food food){
-        return new ResponseEntity<>(iFoodService.updateFood(id, food), HttpStatus.OK);
+    public Food updateFood(@PathVariable long id, @RequestBody Food food){
+        return foodService.updateFood(id, food);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteFood(@PathVariable long id){
-        iFoodService.deleteFood(id);
-        return new ResponseEntity<>("The food is successfully deleted", HttpStatus.OK);
+    public String deleteFood(@PathVariable long id){
+        foodService.deleteFood(id);
+        return "Food with id " + id + " was deleted";
     }
 
 }
