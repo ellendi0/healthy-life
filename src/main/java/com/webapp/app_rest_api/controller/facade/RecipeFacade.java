@@ -2,17 +2,13 @@ package com.webapp.app_rest_api.controller.facade;
 
 import com.webapp.app_rest_api.dto.FoodDto;
 import com.webapp.app_rest_api.dto.RecipeDto;
-import com.webapp.app_rest_api.model.entities.Food;
-import com.webapp.app_rest_api.model.entities.FoodToRecipe;
 import com.webapp.app_rest_api.model.entities.Recipe;
 import com.webapp.app_rest_api.model.mapper.RecipeMapper;
-import com.webapp.app_rest_api.service.impl.RecipeService;
+import com.webapp.app_rest_api.service.RecipeService;
 import org.decimal4j.util.DoubleRounder;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
 
 @Component
 public class RecipeFacade {
@@ -109,15 +105,6 @@ public class RecipeFacade {
 
     public RecipeDto getRecipeWithGivenWeight(Long recipeId, Double weight) {
         Recipe recipe = recipeService.getRecipe(recipeId);
-        RecipeDto recipeDto = recipeMapper.mapToDto(recipe);
-        recipeDto.setName(recipe.getName());
-        recipeDto.setWeight(weight);
-        recipeDto.setNumberOfCalories(DoubleRounder.round(recipeDto.getNumberOfCalories() * weight / 100, 3));
-        recipeDto.setNumberOfFat(DoubleRounder.round(recipeDto.getNumberOfFat() * weight / 100, 3));
-        recipeDto.setNumberOfCarbohydrate(DoubleRounder.round(recipeDto.getNumberOfCarbohydrate() * weight / 100, 3));
-        recipeDto.setNumberOfProtein(DoubleRounder.round(recipeDto.getNumberOfProtein() * weight / 100, 3));
-        recipeDto.setNumberOfSugar(DoubleRounder.round(recipeDto.getNumberOfSugar() * weight / 100, 3));
-        recipeDto.setNumberOfFiber(DoubleRounder.round(recipeDto.getNumberOfFiber() * weight / 100, 3));
-        return recipeDto;
+        return recipeMapper.mapToDto(recipe, weight);
     }
 }

@@ -3,7 +3,7 @@ package com.webapp.app_rest_api.controller.facade;
 import com.webapp.app_rest_api.dto.PostDto;
 import com.webapp.app_rest_api.model.entities.Post;
 import com.webapp.app_rest_api.model.mapper.PostMapper;
-import com.webapp.app_rest_api.service.impl.PostService;
+import com.webapp.app_rest_api.service.PostService;
 import org.springframework.stereotype.Component;
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.webapp.app_rest_api.service.impl;
+package com.webapp.app_rest_api.service;
 
 import com.webapp.app_rest_api.exception.ResourceNotFoundException;
 import com.webapp.app_rest_api.model.mapper.PostMapper;
