@@ -1,15 +1,12 @@
 package com.webapp.app_rest_api.controller.facade;
 
 import com.webapp.app_rest_api.dto.FoodDto;
-import com.webapp.app_rest_api.exception.ResourceNotFoundException;
 import com.webapp.app_rest_api.model.entities.Food;
 import com.webapp.app_rest_api.model.mapper.FoodMapper;
-import com.webapp.app_rest_api.service.impl.FoodService;
+import com.webapp.app_rest_api.service.FoodService;
 import org.decimal4j.util.DoubleRounder;
-import org.hibernate.mapping.Collection;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -48,23 +45,6 @@ public class FoodFacade {
 
     public FoodDto getFoodWithGivenWeight(Long id, Double weight) {
         Food food = foodService.getFoodById(id);
-        FoodDto foodWithGivenWeight = foodMapper.mapToDto(food);
-        foodWithGivenWeight.setName(food.getName());
-        foodWithGivenWeight.setTypeOfFood(food.getTypeOfFood());
-        foodWithGivenWeight.setWeight(weight);
-        foodWithGivenWeight.setNumberOfCalories(DoubleRounder
-                .round(food.getNumberOfCalories() * weight / 100, 3));
-        foodWithGivenWeight.setNumberOfFat(DoubleRounder
-                .round(food.getNumberOfFat() * weight / 100, 3));
-        foodWithGivenWeight.setNumberOfCarbohydrate(DoubleRounder
-                .round(food.getNumberOfCarbohydrate() * weight / 100, 3));
-        foodWithGivenWeight.setNumberOfProtein(DoubleRounder
-                .round(food.getNumberOfProtein() * weight / 100, 3));
-        foodWithGivenWeight.setNumberOfSugar(DoubleRounder
-                .round(food.getNumberOfSugar() * weight / 100, 3));
-        foodWithGivenWeight.setNumberOfFiber(DoubleRounder
-                .round(food.getNumberOfFiber() * weight / 100, 3));
-        return foodWithGivenWeight;
+        return foodMapper.mapToDto(food, weight);
     }
-
 }

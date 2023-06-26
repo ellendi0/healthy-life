@@ -1,6 +1,6 @@
 package com.webapp.app_rest_api.component;
 
-import com.webapp.app_rest_api.service.impl.FoodService;
+import com.webapp.app_rest_api.service.FoodService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;

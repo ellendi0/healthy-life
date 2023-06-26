@@ -1,4 +1,4 @@
-package com.webapp.app_rest_api.service.impl;
+package com.webapp.app_rest_api.service;
 
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;

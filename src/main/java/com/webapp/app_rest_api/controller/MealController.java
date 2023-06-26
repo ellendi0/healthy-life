@@ -3,7 +3,6 @@ package com.webapp.app_rest_api.controller;
 import com.webapp.app_rest_api.controller.facade.MealFacade;
 import com.webapp.app_rest_api.dto.MealDto;
 import com.webapp.app_rest_api.model.entities.Meal;
-import com.webapp.app_rest_api.service.impl.MealService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

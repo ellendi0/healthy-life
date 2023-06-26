@@ -5,7 +5,7 @@ import com.webapp.app_rest_api.dto.MealDto;
 import com.webapp.app_rest_api.dto.RecipeDto;
 import com.webapp.app_rest_api.model.entities.*;
 import com.webapp.app_rest_api.model.mapper.MealMapper;
-import com.webapp.app_rest_api.service.impl.MealService;
+import com.webapp.app_rest_api.service.MealService;
 import org.springframework.stereotype.Component;
 import java.util.List;
 

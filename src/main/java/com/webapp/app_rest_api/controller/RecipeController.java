@@ -3,7 +3,6 @@ package com.webapp.app_rest_api.controller;
 import com.webapp.app_rest_api.controller.facade.RecipeFacade;
 import com.webapp.app_rest_api.dto.RecipeDto;
 import com.webapp.app_rest_api.model.entities.Recipe;
-import com.webapp.app_rest_api.service.impl.RecipeService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,6 +35,11 @@ public class RecipeController {
     @PutMapping({"/{id}"})
     public RecipeDto updateRecipe(@PathVariable Long id, @RequestBody Recipe recipe) {
         return recipeFacade.updateRecipe(id, recipe);
+    }
+
+    @GetMapping({"/{id}/weight/{weight}"})
+    public RecipeDto getRecipeWithGivenWeight(@PathVariable Long id, @PathVariable Double weight) {
+        return recipeFacade.getRecipeWithGivenWeight(id, weight);
     }
 
     @DeleteMapping({"/{id}"})

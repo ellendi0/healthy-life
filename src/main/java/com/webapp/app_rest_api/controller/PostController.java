@@ -4,7 +4,6 @@ package com.webapp.app_rest_api.controller;
 import com.webapp.app_rest_api.controller.facade.PostFacade;
 import com.webapp.app_rest_api.dto.PostDto;
 import com.webapp.app_rest_api.model.entities.Post;
-import com.webapp.app_rest_api.service.impl.PostService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
