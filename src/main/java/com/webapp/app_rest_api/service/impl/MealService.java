@@ -1,13 +1,8 @@
 package com.webapp.app_rest_api.service.impl;
 
-import com.webapp.app_rest_api.dto.FoodDto;
-import com.webapp.app_rest_api.dto.MealDto;
-import com.webapp.app_rest_api.dto.RecipeDto;
 import com.webapp.app_rest_api.exception.ResourceNotFoundException;
 import com.webapp.app_rest_api.model.entities.*;
-import com.webapp.app_rest_api.model.mapper.FoodMapper;
 import com.webapp.app_rest_api.model.mapper.MealMapper;
-import com.webapp.app_rest_api.model.mapper.RecipeMapper;
 import com.webapp.app_rest_api.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,7 +60,6 @@ public class MealService {
 
         foodToMealService.createUpdateFoodToMeal(foodToMeal);
         createUpdateMeal(meal);
-        countNutritiousFromFoodList(mealId);
         return meal;
     }
 
@@ -76,7 +70,7 @@ public class MealService {
         RecipeToMeal recipeToMeal = recipeToMealService.getRecipeByMealIdAndRecipeId(mealId, recipeId);
 
         if(Objects.isNull(recipeToMeal)){
-            Recipe recipe = recipeService.getRecipeById(recipeId);
+            Recipe recipe = recipeService.getRecipe(recipeId);
             recipeToMeal = new RecipeToMeal(recipe, meal, weight);
             meal.getRecipe().add(recipeToMeal);
             recipe.getMeal().add(recipeToMeal);
@@ -85,19 +79,16 @@ public class MealService {
         }
         recipeToMealService.createUpdateRecipeToMeal(recipeToMeal);
         createUpdateMeal(meal);
-        countNutritiousFromFoodList(mealId);
         return meal;
     }
 
     public Meal updateFoodInMeal(long mealId, long foodId, double weight) {
         foodToMealService.updateFoodToMeal(mealId, foodId, weight);
-        countNutritiousFromFoodList(mealId);
         return getMeal(mealId);
     }
 
     public Meal updateRecipeInMeal(long mealId, long recipeId, double weight) {
         recipeToMealService.updateRecipeToMeal(mealId, recipeId, weight);
-        countNutritiousFromFoodList(mealId);
         return getMeal(mealId);
     }
 
@@ -118,44 +109,4 @@ public class MealService {
     public void deleteAllMeals() {
         mealRepository.deleteAll();
     }
-
-    public void countNutritiousFromFoodList(long mealId) {
-        double calories = 0;
-        double proteins = 0;
-        double fats = 0;
-        double carbohydrates = 0;
-        double weight = 0;
-
-        Meal meal = getMeal(mealId);
-
-        MealDto mealDto = mealMapper.mapToDto(meal);
-
-        if (mealDto.getFood() != null) {
-            for (FoodDto foodDto : mealDto.getFood()) {
-                calories += foodDto.getNumberOfCalories();
-                proteins += foodDto.getNumberOfProtein();
-                fats += foodDto.getNumberOfFat();
-                carbohydrates += foodDto.getNumberOfCarbohydrate();
-                weight += foodDto.getWeight();
-            }
-        }
-
-        if (mealDto.getRecipes() != null) {
-            for (RecipeDto recipeDto : mealDto.getRecipes()) {
-                calories += recipeDto.getNumberOfCalories();
-                proteins += recipeDto.getNumberOfProtein();
-                fats += recipeDto.getNumberOfFat();
-                carbohydrates += recipeDto.getNumberOfCarbohydrate();
-                weight += recipeDto.getWeight();
-            }
-        }
-        meal.setNumberOfCalories(calories);
-        meal.setNumberOfProtein(proteins);
-        meal.setNumberOfFat(fats);
-        meal.setNumberOfCarbohydrate(carbohydrates);
-        meal.setWeight(weight);
-
-        mealRepository.save(meal);
-    }
-
 }

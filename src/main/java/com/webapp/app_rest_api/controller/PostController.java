@@ -1,6 +1,8 @@
 package com.webapp.app_rest_api.controller;
 
 
+import com.webapp.app_rest_api.controller.facade.PostFacade;
+import com.webapp.app_rest_api.dto.PostDto;
 import com.webapp.app_rest_api.model.entities.Post;
 import com.webapp.app_rest_api.service.impl.PostService;
 import org.springframework.web.bind.annotation.*;
@@ -10,41 +12,41 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/posts")
 public class PostController {
-    private PostService postService;
+    private PostFacade postFacade;
 
-    public PostController(PostService postService) {
-        this.postService = postService;
+    public PostController(PostFacade postFacade) {
+        this.postFacade = postFacade;
     }
 
     @GetMapping("/{id}")
-    public Post getPostById(@PathVariable long id){
-        return postService.getPost(id);
+    public PostDto getPostById(@PathVariable Long id){
+        return postFacade.getPost(id);
     }
 
     @GetMapping
-    public List<Post> getAllPost(){
-        return postService.getAllPost();
+    public List<PostDto> getAllPost(){
+        return postFacade.getAllPost();
     }
 
     @PostMapping
-    public Post createPost(@RequestBody Post post){
-        return postService.createPost(post);
+    public PostDto createPost(@RequestBody Post post){
+        return postFacade.createPost(post);
     }
 
     @PutMapping("/{id}")
-    public Post updatePost(@PathVariable long id, @RequestBody Post post){
-        return postService.updatePost(id, post);
+    public PostDto updatePost(@PathVariable Long id, @RequestBody Post post){
+        return postFacade.updatePost(id, post);
     }
 
     @DeleteMapping("/{id}")
-    public String deletePost(@PathVariable long id){
-        postService.deletePost(id);
-        return ("The post is successfully deleted");
+    public PostDto deletePost(@PathVariable long id){
+        System.out.println("The post with id " + id + " was deleted.");
+        return postFacade.deletePost(id);
     }
 
     @DeleteMapping
     public String deleteAllPost(){
-        postService.deleteAllPost();
+        postFacade.deleteAllPost();
         return ("All posts are successfully deleted");
     }
 }

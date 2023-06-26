@@ -7,8 +7,6 @@ import com.webapp.app_rest_api.model.entities.Food;
 import com.webapp.app_rest_api.model.entities.FoodToRecipe;
 import com.webapp.app_rest_api.model.entities.Recipe;
 import com.webapp.app_rest_api.model.mapper.RecipeMapper;
-import com.webapp.app_rest_api.repository.FoodRepository;
-import com.webapp.app_rest_api.repository.FoodToRecipeRepository;
 import com.webapp.app_rest_api.repository.RecipeRepository;
 import org.decimal4j.util.DoubleRounder;
 import org.springframework.stereotype.Service;
@@ -32,7 +30,7 @@ public class RecipeService{
         this.foodToRecipeService = foodToRecipeService;
     }
 
-    public Recipe getRecipeById(Long id) {
+    public Recipe getRecipe(Long id) {
         return recipeRepository.findById(id).orElseThrow(()
                 -> new ResourceNotFoundException("Recipe", "id", String.valueOf(id)));
     }
@@ -47,7 +45,7 @@ public class RecipeService{
 
     @Transactional
     public Recipe addFoodToRecipe(Long recipeId, Long foodId, double weight) {
-        Recipe recipe = getRecipeById(recipeId);
+        Recipe recipe = getRecipe(recipeId);
         FoodToRecipe foodToRecipe = foodToRecipeService.getFoodByRecipeIdAndFoodId(recipeId, foodId);
 
         if(Objects.isNull(foodToRecipe)){
@@ -65,63 +63,26 @@ public class RecipeService{
     }
 
     public Recipe updateRecipe(Long recipeId, Recipe recipe) {
-        Recipe recipeNew = getRecipeById(recipeId);
-        recipeNew.setName(recipeNew.getName());
+        Recipe recipeNew = getRecipe(recipeId);
+        recipeNew.setName(recipe.getName());
         return recipeRepository.save(recipeNew);
     }
 
     public Recipe updateFoodInRecipe(Long recipeId, Long foodId, Double weight) {
         foodToRecipeService.updateFoodToRecipe(recipeId, foodId, weight);
-        return getRecipeById(recipeId);
+        return getRecipe(recipeId);
     }
 
     public void deleteRecipe(Long id) {
         recipeRepository.deleteById(id);
     }
 
+    public void deleteAllRecipe() {
+        recipeRepository.deleteAll();
+    }
+
     @Transactional
     public void deleteFoodFromRecipe(Long recipeId, Long foodId) {
         foodToRecipeService.deleteByRecipeIdAndFoodId(recipeId, foodId);
-    }
-
-    public void countNutritiousFromFoodList(RecipeDto recipeDto) {
-        double calories = 0;
-        double proteins = 0;
-        double fats = 0;
-        double carbohydrates = 0;
-        double weight = 0;
-
-        if(recipeDto.getFood() != null) {
-            for (FoodDto foodDto : recipeDto.getFood()) {
-                calories += foodDto.getNumberOfCalories();
-                proteins += foodDto.getNumberOfProtein();
-                fats += foodDto.getNumberOfFat();
-                carbohydrates += foodDto.getNumberOfCarbohydrate();
-                weight += foodDto.getWeight();
-            }
-        }
-
-        recipeDto.setNumberOfCalories(calories);
-        recipeDto.setNumberOfProtein(proteins);
-        recipeDto.setNumberOfFat(fats);
-        recipeDto.setNumberOfCarbohydrate(carbohydrates);
-        recipeDto.setWeight(weight);
-        recipeRepository.save(recipeMapper.mapToEntity(recipeDto));
-    }
-
-    public RecipeDto getRecipeWithGivenWeight(long recipeId, double weight) {
-        Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(()
-                -> new ResourceNotFoundException("Recipe", "id", String.valueOf(recipeId)));
-        RecipeDto recipeDto = recipeMapper.mapToDto(recipe);
-        recipeDto.setId(recipe.getId());
-        recipeDto.setName(recipe.getName());
-        recipeDto.setWeight(weight);
-        recipeDto.setNumberOfCalories(DoubleRounder.round(recipeDto.getNumberOfCalories() * weight / 100, 3));
-        recipeDto.setNumberOfFat(DoubleRounder.round(recipeDto.getNumberOfFat() * weight / 100, 3));
-        recipeDto.setNumberOfCarbohydrate(DoubleRounder.round(recipeDto.getNumberOfCarbohydrate() * weight / 100, 3));
-        recipeDto.setNumberOfProtein(DoubleRounder.round(recipeDto.getNumberOfProtein() * weight / 100, 3));
-        recipeDto.setNumberOfSugar(DoubleRounder.round(recipeDto.getNumberOfSugar() * weight / 100, 3));
-        recipeDto.setNumberOfFiber(DoubleRounder.round(recipeDto.getNumberOfFiber() * weight / 100, 3));
-        return recipeDto;
     }
 }

@@ -1,5 +1,6 @@
 package com.webapp.app_rest_api.controller;
 
+import com.webapp.app_rest_api.controller.facade.RecipeFacade;
 import com.webapp.app_rest_api.dto.RecipeDto;
 import com.webapp.app_rest_api.model.entities.Recipe;
 import com.webapp.app_rest_api.service.impl.RecipeService;
@@ -7,56 +8,55 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-// response<entity> delete
 @RestController
 @RequestMapping("/api/recipe")
 public class RecipeController {
 
-    private RecipeService recipeService;
+    private RecipeFacade recipeFacade;
 
-    public RecipeController(RecipeService recipeService) {
-        this.recipeService = recipeService;
+    public RecipeController(RecipeFacade recipeFacade) {
+        this.recipeFacade = recipeFacade;
     }
 
     @GetMapping({"/{id}"})
-    public Recipe getRecipeById(@PathVariable long id) {
-        return recipeService.getRecipeById(id);
+    public RecipeDto getRecipeById(@PathVariable Long id) {
+        return recipeFacade.getRecipe(id);
     }
 
     @GetMapping
-    public List<Recipe> getAllRecipe() {
-        return recipeService.getAllRecipe();
+    public List<RecipeDto> getAllRecipe() {
+        return recipeFacade.getAllRecipe();
     }
 
     @PostMapping
-    public Recipe createRecipe(@RequestBody Recipe recipe) {
-        return recipeService.createUpdateRecipe(recipe);
+    public RecipeDto createRecipe(@RequestBody Recipe recipe) {
+        return recipeFacade.createRecipe(recipe);
     }
 
     @PutMapping({"/{id}"})
-    public Recipe updateRecipe(@PathVariable long id, @RequestBody Recipe recipe) {
-        return recipeService.updateRecipe(id, recipe);
+    public RecipeDto updateRecipe(@PathVariable Long id, @RequestBody Recipe recipe) {
+        return recipeFacade.updateRecipe(id, recipe);
     }
 
     @DeleteMapping({"/{id}"})
-    public String deleteRecipe(@PathVariable long id) {
-        recipeService.deleteRecipe(id);
-        return "The recipe is successfully deleted";
+    public RecipeDto deleteRecipe(@PathVariable Long id) {
+        System.out.println("The recipe with id " + id + " was deleted.");
+        return recipeFacade.deleteRecipe(id);
     }
 
     @PostMapping({"/{id}/addfood/{idFood}/{weight}"})
-    public Recipe addFoodToRecipe(@PathVariable long id, @PathVariable long idFood, @PathVariable double weight) {
-        return recipeService.addFoodToRecipe(id, idFood, weight);
+    public RecipeDto addFoodToRecipe(@PathVariable Long id, @PathVariable Long idFood, @PathVariable Double weight) {
+        return recipeFacade.addFoodToRecipe(id, idFood, weight);
     }
 
     @PutMapping({"/{id}/updaterecipe/{idFood}/{weight}"})
-    public Recipe updateFoodInRecipe(@PathVariable long id, @PathVariable long idFood, @PathVariable double weight) {
-        return recipeService.updateFoodInRecipe(id, idFood, weight);
+    public RecipeDto updateFoodInRecipe(@PathVariable Long id, @PathVariable Long idFood, @PathVariable Double weight) {
+        return recipeFacade.updateFoodInRecipe(id, idFood, weight);
     }
 
     @DeleteMapping({"/{id}/deletefood/{idFood}"})
-    public String deleteFoodFromRecipe(@PathVariable long id, @PathVariable long idFood) {
-        recipeService.deleteFoodFromRecipe(id, idFood);
-        return "The food is successfully deleted";
+    public RecipeDto deleteFoodFromRecipe(@PathVariable long id, @PathVariable long idFood) {
+        System.out.println("The food with id " + idFood + " was deleted from recipe.");
+        return recipeFacade.deleteFoodFromRecipe(id, idFood);
     }
 }

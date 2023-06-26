@@ -1,46 +1,50 @@
 package com.webapp.app_rest_api.controller;
 
+import com.webapp.app_rest_api.controller.facade.FoodFacade;
 import com.webapp.app_rest_api.dto.FoodDto;
 import com.webapp.app_rest_api.model.entities.Food;
-import com.webapp.app_rest_api.service.impl.FoodService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @Controller
 @RequestMapping("api/food")
 public class FoodController {
 
-    private final FoodService foodService;
-    public FoodController(FoodService foodService){
-        this.foodService = foodService;
+    private final FoodFacade foodFacade;
+
+    public FoodController(FoodFacade foodFacade) {
+        this.foodFacade = foodFacade;
     }
 
     @GetMapping("/{id}")
-    public Food getFoodById(@PathVariable long id){
-        return foodService.getFoodById(id);
+    public FoodDto getFoodById(@PathVariable long id){
+        return foodFacade.getFoodById(id);
     }
 
     @GetMapping
-    public List<Food> getAllFood(){
-        return foodService.getAllFood();
+    public List<FoodDto> getAllFood(){
+        return foodFacade.getAllFood();
+    }
+
+    @GetMapping("/{id}/weight/{weight}")
+    public FoodDto getFoodWithGivenWeight(@PathVariable long id, @PathVariable double weight){
+        return foodFacade.getFoodWithGivenWeight(id, weight);
     }
 
     @PostMapping
-    public Food postFood(@RequestBody Food food){
-        return foodService.createFood(food);
+    public FoodDto postFood(@RequestBody Food food){
+        return foodFacade.createFood(food);
     }
 
     @PutMapping("/{id}")
-    public Food updateFood(@PathVariable long id, @RequestBody Food food){
-        return foodService.updateFood(id, food);
+    public FoodDto updateFood(@PathVariable long id, @RequestBody Food food){
+        return foodFacade.updateFood(id, food);
     }
 
     @DeleteMapping("/{id}")
-    public String deleteFood(@PathVariable long id){
-        foodService.deleteFood(id);
-        return "Food with id " + id + " was deleted";
+    public FoodDto deleteFood(@PathVariable long id){
+        System.out.println("The food with id " + id + " was deleted.");
+        return foodFacade.deleteFood(id);
     }
-
 }

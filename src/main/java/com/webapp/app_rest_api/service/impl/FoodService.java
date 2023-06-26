@@ -54,7 +54,6 @@ public class FoodService{
         Food food = foodRepository.findById(id).orElseThrow(()
                 -> new ResourceNotFoundException("Food", "id", String.valueOf(id)));
         FoodDto foodWithGivenWeight = foodMapper.mapToDto(food);
-        foodWithGivenWeight.setId(food.getId());
         foodWithGivenWeight.setName(food.getName());
         foodWithGivenWeight.setTypeOfFood(food.getTypeOfFood());
         foodWithGivenWeight.setWeight(weight);
