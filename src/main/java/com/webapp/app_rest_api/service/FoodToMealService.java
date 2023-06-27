@@ -1,13 +1,9 @@
 package com.webapp.app_rest_api.service;
 
 import com.webapp.app_rest_api.exception.ResourceNotFoundException;
-import com.webapp.app_rest_api.model.entities.Food;
-import com.webapp.app_rest_api.model.entities.FoodToMeal;
-import com.webapp.app_rest_api.model.entities.Meal;
+import com.webapp.app_rest_api.model.entities.connection.FoodToMeal;
 import com.webapp.app_rest_api.repository.FoodToMealRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.Objects;
 
 @Service
 public class FoodToMealService {

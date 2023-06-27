@@ -1,6 +1,6 @@
 package com.webapp.app_rest_api.repository;
 
-import com.webapp.app_rest_api.model.entities.RecipeToMeal;
+import com.webapp.app_rest_api.model.entities.connection.RecipeToMeal;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,7 +1,7 @@
 package com.webapp.app_rest_api.service;
 
 import com.webapp.app_rest_api.exception.ResourceNotFoundException;
-import com.webapp.app_rest_api.model.entities.RecipeToMeal;
+import com.webapp.app_rest_api.model.entities.connection.RecipeToMeal;
 import com.webapp.app_rest_api.repository.RecipeToMealRepository;
 import org.springframework.stereotype.Service;
 

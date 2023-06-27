@@ -2,7 +2,7 @@ package com.webapp.app_rest_api.service;
 
 import com.webapp.app_rest_api.exception.ResourceNotFoundException;
 import com.webapp.app_rest_api.model.entities.Food;
-import com.webapp.app_rest_api.model.entities.FoodToRecipe;
+import com.webapp.app_rest_api.model.entities.connection.FoodToRecipe;
 import com.webapp.app_rest_api.model.entities.Recipe;
 import com.webapp.app_rest_api.model.mapper.RecipeMapper;
 import com.webapp.app_rest_api.repository.RecipeRepository;

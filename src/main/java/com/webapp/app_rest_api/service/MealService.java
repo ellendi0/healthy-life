@@ -2,7 +2,8 @@ package com.webapp.app_rest_api.service;
 
 import com.webapp.app_rest_api.exception.ResourceNotFoundException;
 import com.webapp.app_rest_api.model.entities.*;
-import com.webapp.app_rest_api.model.mapper.MealMapper;
+import com.webapp.app_rest_api.model.entities.connection.FoodToMeal;
+import com.webapp.app_rest_api.model.entities.connection.RecipeToMeal;
 import com.webapp.app_rest_api.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,18 +17,15 @@ public class MealService {
     private RecipeService recipeService;
     private FoodToMealService foodToMealService;
     private RecipeToMealService recipeToMealService;
-    private MealMapper mealMapper;
 
     public MealService(MealRepository mealRepository,
                        FoodService foodService,
                        RecipeService recipeService,
-                       MealMapper mealMapper,
                        FoodToMealService foodToMealService,
                        RecipeToMealService recipeToMealService) {
         this.mealRepository = mealRepository;
         this.foodService = foodService;
         this.recipeService = recipeService;
-        this.mealMapper = mealMapper;
         this.foodToMealService = foodToMealService;
         this.recipeToMealService = recipeToMealService;
     }
