@@ -3,7 +3,7 @@ package com.webapp.app_rest_api.model.mapper;
 import com.webapp.app_rest_api.dto.FoodDto;
 import com.webapp.app_rest_api.dto.RecipeDto;
 import com.webapp.app_rest_api.model.entities.Food;
-import com.webapp.app_rest_api.model.entities.FoodToRecipe;
+import com.webapp.app_rest_api.model.entities.connection.FoodToRecipe;
 import com.webapp.app_rest_api.model.entities.Recipe;
 import org.decimal4j.util.DoubleRounder;
 import org.springframework.stereotype.Component;

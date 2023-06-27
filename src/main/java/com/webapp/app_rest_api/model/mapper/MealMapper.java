@@ -4,6 +4,8 @@ import com.webapp.app_rest_api.dto.FoodDto;
 import com.webapp.app_rest_api.dto.MealDto;
 import com.webapp.app_rest_api.dto.RecipeDto;
 import com.webapp.app_rest_api.model.entities.*;
+import com.webapp.app_rest_api.model.entities.connection.FoodToMeal;
+import com.webapp.app_rest_api.model.entities.connection.RecipeToMeal;
 import org.decimal4j.util.DoubleRounder;
 import org.springframework.stereotype.Component;
 

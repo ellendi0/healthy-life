@@ -1,5 +1,7 @@
-package com.webapp.app_rest_api.model.entities;
+package com.webapp.app_rest_api.model.entities.connection;
 
+import com.webapp.app_rest_api.model.entities.Food;
+import com.webapp.app_rest_api.model.entities.Meal;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;

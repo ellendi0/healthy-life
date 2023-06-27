@@ -1,6 +1,8 @@
 package com.webapp.app_rest_api.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.webapp.app_rest_api.model.entities.connection.FoodToMeal;
+import com.webapp.app_rest_api.model.entities.connection.FoodToRecipe;
 import com.webapp.app_rest_api.model.enums.TypeOfFood;
 import jakarta.persistence.*;
 import lombok.*;
