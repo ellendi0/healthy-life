@@ -14,21 +14,17 @@ public class FoodToMealService {
     }
 
     public FoodToMeal getFoodToMealById(Long mealId, Long foodId){
-        return foodToMealRepository.getFoodToMealByMealIdAndFoodId(mealId, foodId).orElse(null);
+        return foodToMealRepository.getFoodToMealByMealIdAndFoodId(mealId, foodId).orElseThrow(()
+                -> new ResourceNotFoundException(
+                        "Food", "id", String.valueOf(foodId), "Meal", "id", String.valueOf(mealId)));
     }
 
     public FoodToMeal createUpdateFoodToMeal(FoodToMeal foodToMeal){
         return foodToMealRepository.save(foodToMeal);
     }
     public FoodToMeal updateFoodToMeal(Long mealId, Long foodId, Double weight){
-        if(!foodToMealRepository.existsByMealIdAndFoodId(mealId, foodId)){
-            throw new ResourceNotFoundException(
-                    "Food", "id", String.valueOf(foodId), "Meal", "id", String.valueOf(mealId));
-        }
-
         FoodToMeal foodToMeal = getFoodToMealById(mealId, foodId);
         foodToMeal.setWeight(weight);
-
         return foodToMealRepository.save(foodToMeal);
     }
 

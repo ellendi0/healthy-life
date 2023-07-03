@@ -19,8 +19,8 @@ import java.util.List;
 @Service
 public class FoodService{
 
-    private FoodRepository foodRepository;
-    private FoodMapper foodMapper;
+    private final FoodRepository foodRepository;
+    private final FoodMapper foodMapper;
 
     public FoodService(FoodRepository foodRepository, FoodMapper foodMapper) {
         this.foodRepository = foodRepository;
@@ -50,27 +50,27 @@ public class FoodService{
         foodRepository.deleteById(id);
     }
 
-    public FoodDto getFoodWithGivenWeight(Long id, Double weight) {
-        Food food = foodRepository.findById(id).orElseThrow(()
-                -> new ResourceNotFoundException("Food", "id", String.valueOf(id)));
-        FoodDto foodWithGivenWeight = foodMapper.mapToDto(food);
-        foodWithGivenWeight.setName(food.getName());
-        foodWithGivenWeight.setTypeOfFood(food.getTypeOfFood());
-        foodWithGivenWeight.setWeight(weight);
-        foodWithGivenWeight.setNumberOfCalories(DoubleRounder
-                .round(food.getNumberOfCalories() * weight / 100, 3));
-        foodWithGivenWeight.setNumberOfFat(DoubleRounder
-                .round(food.getNumberOfFat() * weight / 100, 3));
-        foodWithGivenWeight.setNumberOfCarbohydrate(DoubleRounder
-                .round(food.getNumberOfCarbohydrate() * weight / 100, 3));
-        foodWithGivenWeight.setNumberOfProtein(DoubleRounder
-                .round(food.getNumberOfProtein() * weight / 100, 3));
-        foodWithGivenWeight.setNumberOfSugar(DoubleRounder
-                .round(food.getNumberOfSugar() * weight / 100, 3));
-        foodWithGivenWeight.setNumberOfFiber(DoubleRounder
-                .round(food.getNumberOfFiber() * weight / 100, 3));
-        return foodWithGivenWeight;
-    }
+//    public FoodDto getFoodWithGivenWeight(Long id, Double weight) {
+//        Food food = foodRepository.findById(id).orElseThrow(()
+//                -> new ResourceNotFoundException("Food", "id", String.valueOf(id)));
+//        FoodDto foodWithGivenWeight = foodMapper.mapToDto(food);
+//        foodWithGivenWeight.setName(food.getName());
+//        foodWithGivenWeight.setTypeOfFood(food.getTypeOfFood());
+//        foodWithGivenWeight.setWeight(weight);
+//        foodWithGivenWeight.setNumberOfCalories(DoubleRounder
+//                .round(food.getNumberOfCalories() * weight / 100, 3));
+//        foodWithGivenWeight.setNumberOfFat(DoubleRounder
+//                .round(food.getNumberOfFat() * weight / 100, 3));
+//        foodWithGivenWeight.setNumberOfCarbohydrate(DoubleRounder
+//                .round(food.getNumberOfCarbohydrate() * weight / 100, 3));
+//        foodWithGivenWeight.setNumberOfProtein(DoubleRounder
+//                .round(food.getNumberOfProtein() * weight / 100, 3));
+//        foodWithGivenWeight.setNumberOfSugar(DoubleRounder
+//                .round(food.getNumberOfSugar() * weight / 100, 3));
+//        foodWithGivenWeight.setNumberOfFiber(DoubleRounder
+//                .round(food.getNumberOfFiber() * weight / 100, 3));
+//        return foodWithGivenWeight;
+//    }
 
     public void saveDataFromCsv(String csvFilePath) throws IOException, CsvValidationException {
         FileReader fileReader = new FileReader(csvFilePath);

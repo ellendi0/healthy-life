@@ -4,6 +4,7 @@ import com.webapp.app_rest_api.exception.ResourceNotFoundException;
 import com.webapp.app_rest_api.model.entities.*;
 import com.webapp.app_rest_api.model.entities.connection.FoodToMeal;
 import com.webapp.app_rest_api.model.entities.connection.RecipeToMeal;
+import com.webapp.app_rest_api.model.enums.TypeOfMeal;
 import com.webapp.app_rest_api.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,11 +13,11 @@ import java.util.*;
 
 @Service
 public class MealService {
-    private MealRepository mealRepository;
-    private FoodService foodService;
-    private RecipeService recipeService;
-    private FoodToMealService foodToMealService;
-    private RecipeToMealService recipeToMealService;
+    private final MealRepository mealRepository;
+    private final FoodService foodService;
+    private final RecipeService recipeService;
+    private final FoodToMealService foodToMealService;
+    private final RecipeToMealService recipeToMealService;
 
     public MealService(MealRepository mealRepository,
                        FoodService foodService,
@@ -38,6 +39,11 @@ public class MealService {
                 .orElseThrow(() -> new ResourceNotFoundException("Meal", "id", String.valueOf(id)));
     }
 
+    public Meal createMeal(TypeOfMeal typeOfMeal){
+        Meal meal = new Meal();
+        meal.setTypeOfMeal(typeOfMeal);
+        return createUpdateMeal(meal);
+    }
     public List<Meal> getAllMeals() {
         return mealRepository.findAll();
     }

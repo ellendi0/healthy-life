@@ -53,6 +53,10 @@ public class Meal{
     @OneToMany(mappedBy = "meal", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<RecipeToMeal> recipe = new HashSet<>();
 
+    @ManyToOne
+    @JoinColumn(name = "diet_id", nullable = false)
+    private DayDiet dayDiet;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

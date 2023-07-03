@@ -7,8 +7,8 @@ public enum Goal {
 
     public double getCaloriesByGoal(){
         return switch (this){
-            case GAIN_WEIGHT -> 0.1;
-            case LOSE_WEIGHT -> -0.1;
+            case GAIN_WEIGHT -> 0.2;
+            case LOSE_WEIGHT -> -0.2;
             case SAVE_WEIGHT -> 1;
         };
     }

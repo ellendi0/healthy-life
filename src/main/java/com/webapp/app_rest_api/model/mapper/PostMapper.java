@@ -5,6 +5,8 @@ import com.webapp.app_rest_api.model.entities.Post;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
+
 @Component
 public class PostMapper {
     public Post mapToEntity(PostDto postDto){
@@ -21,5 +23,12 @@ public class PostMapper {
         postDto.setContent(post.getContent());
         postDto.setDate(post.getDate());
         return postDto;
+    }
+
+    public Post map(Post post, Post postUpdated){
+        postUpdated.setTitle(post.getTitle());
+        postUpdated.setContent(post.getContent());
+        postUpdated.setDate(Instant.now());
+        return postUpdated;
     }
 }

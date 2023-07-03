@@ -36,10 +36,7 @@ public class PostService {
 
     public Post updatePost(long id, Post post) {
         Post postUpdated = getPost(id);
-        postUpdated.setTitle(postUpdated.getTitle());
-        postUpdated.setContent(postUpdated.getContent());
-        postUpdated.setDate(Instant.now());
-        return postRepository.save(postUpdated);
+        return postRepository.save(mapper.map(post, postUpdated));
     }
 
     public void deletePost(long id) {

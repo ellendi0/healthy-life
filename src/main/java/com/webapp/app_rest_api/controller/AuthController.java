@@ -25,6 +25,4 @@ public class AuthController {
     public String authenticate(@RequestBody LoginDto loginDto) {
         return userService.authenticate(loginDto);
     }
-
-
 }

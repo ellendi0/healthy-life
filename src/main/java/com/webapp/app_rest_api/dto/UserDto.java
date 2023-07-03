@@ -25,27 +25,5 @@ public class UserDto {
     @NotEmpty(message = "Email cannot be empty")
     private String email;
 
-//    @NotEmpty(message = "Password cannot be empty")
-//    @Size(min = 8, max = 20, message = "Password must be between 8 and 20 characters")
-//    private String password;
-
     private String token;
-
-//    @NotEmpty(message = "Date of birth cannot be empty")
-//    private String dateOfBirth;
-//
-//    @NotEmpty(message = "Weight cannot be empty")
-//    private String weight;
-//
-//    @NotEmpty(message = "Height cannot be empty")
-//    private String height;
-//
-//    @NotEmpty(message = "This field cannot be empty")
-//    private Gender gender;
-//
-//    @NotEmpty(message = "This field cannot be empty")
-//    private Goal goal;
-//
-//    @NotEmpty(message = "This field cannot be empty")
-//    private Activity activity;
 }

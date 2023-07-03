@@ -18,15 +18,12 @@ public class RecipeToMealService {
     }
 
     public RecipeToMeal getRecipeByMealIdAndRecipeId(Long mealId, Long recipeId) {
-        return recipeToMealRepository.getRecipeToMealByMealIdAndRecipeId(mealId, recipeId).orElse(null);
+        return recipeToMealRepository.getRecipeToMealByMealIdAndRecipeId(mealId, recipeId).orElseThrow(()
+                -> new ResourceNotFoundException(
+                        "Recipe", "id", String.valueOf(recipeId), "Meal", "id", String.valueOf(mealId)));
     }
 
     public RecipeToMeal updateRecipeToMeal(Long mealId, Long recipeId, Double weight) {
-        if(!recipeToMealRepository.existsByMealIdAndRecipeId(mealId, recipeId)) {
-            throw new ResourceNotFoundException(
-                    "Recipe", "id", String.valueOf(recipeId), "Meal", "id", String.valueOf(mealId));
-        }
-
         RecipeToMeal recipeToMeal = getRecipeByMealIdAndRecipeId(mealId, recipeId);
         recipeToMeal.setWeight(weight);
         return recipeToMealRepository.save(recipeToMeal);

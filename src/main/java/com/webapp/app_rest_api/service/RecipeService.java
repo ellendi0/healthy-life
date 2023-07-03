@@ -17,13 +17,13 @@ public class RecipeService{
 
     private RecipeRepository recipeRepository;
     private FoodService foodService;
-    private RecipeMapper recipeMapper;
     private FoodToRecipeService foodToRecipeService;
 
-    public RecipeService(RecipeRepository recipeRepository, FoodService foodService, RecipeMapper recipeMapper, FoodToRecipeService foodToRecipeService) {
+    public RecipeService(RecipeRepository recipeRepository,
+                         FoodService foodService,
+                         FoodToRecipeService foodToRecipeService) {
         this.recipeRepository = recipeRepository;
         this.foodService = foodService;
-        this.recipeMapper = recipeMapper;
         this.foodToRecipeService = foodToRecipeService;
     }
 

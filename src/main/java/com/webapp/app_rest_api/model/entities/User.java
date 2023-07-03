@@ -27,7 +27,7 @@ import java.util.Set;
 public class User implements UserDetails{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, unique = true)
@@ -42,8 +42,12 @@ public class User implements UserDetails{
     @Size(min = 8)
     private String password;
 
-//    @Column(name = "date_of_birth", nullable = false)
-//    private LocalDate dateOfBirth;
+    @Column(name = "is_active")
+    private boolean isAccountNonLocked = true;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "personal_info_id", referencedColumnName = "id")
+    private PersonalInfo personalInfo;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role",
@@ -65,7 +69,7 @@ public class User implements UserDetails{
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return isAccountNonLocked;
     }
 
     @Override
