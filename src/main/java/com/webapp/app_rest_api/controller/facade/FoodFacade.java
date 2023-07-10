@@ -3,8 +3,7 @@ package com.webapp.app_rest_api.controller.facade;
 import com.webapp.app_rest_api.dto.FoodDto;
 import com.webapp.app_rest_api.model.entities.Food;
 import com.webapp.app_rest_api.model.mapper.FoodMapper;
-import com.webapp.app_rest_api.service.FoodService;
-import org.decimal4j.util.DoubleRounder;
+import com.webapp.app_rest_api.service.impl.FoodService;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -29,12 +28,12 @@ public class FoodFacade {
                 .toList();
     }
 
-    public FoodDto createFood(Food food) {
-        return foodMapper.mapToDto(foodService.createFood(food));
+    public FoodDto createFood(FoodDto foodDto) {
+        return foodMapper.mapToDto(foodService.createFood(foodMapper.mapToEntity(foodDto)));
     }
 
-    public FoodDto updateFood(Long id, Food food) {
-        return foodMapper.mapToDto(foodService.updateFood(id, food));
+    public FoodDto updateFood(Long id, FoodDto foodDto) {
+        return foodMapper.mapToDto(foodService.updateFood(id, foodMapper.mapToEntity(foodDto)));
     }
 
     public FoodDto deleteFood(Long id) {

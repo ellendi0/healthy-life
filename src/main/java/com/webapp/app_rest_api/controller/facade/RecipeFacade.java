@@ -4,8 +4,7 @@ import com.webapp.app_rest_api.dto.FoodDto;
 import com.webapp.app_rest_api.dto.RecipeDto;
 import com.webapp.app_rest_api.model.entities.Recipe;
 import com.webapp.app_rest_api.model.mapper.RecipeMapper;
-import com.webapp.app_rest_api.service.RecipeService;
-import org.decimal4j.util.DoubleRounder;
+import com.webapp.app_rest_api.service.impl.RecipeService;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -20,8 +19,8 @@ public class RecipeFacade {
         this.recipeMapper = recipeMapper;
     }
 
-    public RecipeDto createRecipe(Recipe recipe) {
-        return recipeMapper.mapToDto(recipeService.createUpdateRecipe(recipe));
+    public RecipeDto createRecipe(RecipeDto recipeDto) {
+        return recipeMapper.mapToDto(recipeService.createUpdateRecipe(recipeMapper.mapToEntity(recipeDto)));
     }
 
     public RecipeDto getRecipe(Long id) {
@@ -34,11 +33,11 @@ public class RecipeFacade {
                 .toList();
     }
 
-    public RecipeDto updateRecipe(Long id, Recipe recipe) {
-        return recipeMapper.mapToDto(recipeService.updateRecipe(id, recipe));
+    public RecipeDto updateRecipe(Long id, RecipeDto recipeDto) {
+        return recipeMapper.mapToDto(recipeService.updateRecipe(id, recipeMapper.mapToEntity(recipeDto)));
     }
 
-    public RecipeDto addFoodToRecipe(Long recipeId, Long foodId, double weight) {
+    public RecipeDto addFoodToRecipe(Long recipeId, Long foodId, Double weight) {
         recipeService.addFoodToRecipe(recipeId, foodId, weight);
         countNutritiousFromFoodList(recipeId);
         return recipeMapper.mapToDto(recipeService.getRecipe(recipeId));

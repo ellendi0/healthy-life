@@ -2,6 +2,7 @@ package com.webapp.app_rest_api.model.mapper;
 
 import com.webapp.app_rest_api.dto.FoodDto;
 import com.webapp.app_rest_api.model.entities.Food;
+import org.decimal4j.util.DoubleRounder;
 import org.springframework.stereotype.Component;
 
 //зробити свої
@@ -51,14 +52,20 @@ public class FoodMapper {
     public FoodDto mapToDto(Food food, double weight){
         FoodDto foodDto = new FoodDto();
         foodDto.setName(food.getName());
-        foodDto.setWeight(weight);
-        foodDto.setNumberOfCalories(food.getNumberOfCalories());
-        foodDto.setNumberOfCarbohydrate(food.getNumberOfCarbohydrate());
-        foodDto.setNumberOfFat(food.getNumberOfFat());
-        foodDto.setNumberOfProtein(food.getNumberOfProtein());
-        foodDto.setNumberOfSugar(food.getNumberOfSugar());
-        foodDto.setNumberOfFiber(food.getNumberOfFiber());
         foodDto.setTypeOfFood(food.getTypeOfFood());
+        foodDto.setWeight(weight);
+        foodDto.setNumberOfCalories(DoubleRounder
+                .round(food.getNumberOfCalories() * weight / 100, 3));
+        foodDto.setNumberOfFat(DoubleRounder
+                .round(food.getNumberOfFat() * weight / 100, 3));
+        foodDto.setNumberOfCarbohydrate(DoubleRounder
+                .round(food.getNumberOfCarbohydrate() * weight / 100, 3));
+        foodDto.setNumberOfProtein(DoubleRounder
+                .round(food.getNumberOfProtein() * weight / 100, 3));
+        foodDto.setNumberOfSugar(DoubleRounder
+                .round(food.getNumberOfSugar() * weight / 100, 3));
+        foodDto.setNumberOfFiber(DoubleRounder
+                .round(food.getNumberOfFiber() * weight / 100, 3));
         return foodDto;
     }
 }

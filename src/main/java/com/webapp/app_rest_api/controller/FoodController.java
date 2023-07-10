@@ -2,15 +2,13 @@ package com.webapp.app_rest_api.controller;
 
 import com.webapp.app_rest_api.controller.facade.FoodFacade;
 import com.webapp.app_rest_api.dto.FoodDto;
-import com.webapp.app_rest_api.model.entities.Food;
-import org.springframework.stereotype.Controller;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/food")
 public class FoodController {
-
     private final FoodFacade foodFacade;
 
     public FoodController(FoodFacade foodFacade) {
@@ -18,7 +16,7 @@ public class FoodController {
     }
 
     @GetMapping("/{id}")
-    public FoodDto getFoodById(@PathVariable long id){
+    public FoodDto getFoodById(@PathVariable Long id){
         return foodFacade.getFoodById(id);
     }
 
@@ -28,22 +26,22 @@ public class FoodController {
     }
 
     @GetMapping("/{id}/weight/{weight}")
-    public FoodDto getFoodWithGivenWeight(@PathVariable long id, @PathVariable double weight){
+    public FoodDto getFoodWithGivenWeight(@PathVariable Long id, @PathVariable Double weight){
         return foodFacade.getFoodWithGivenWeight(id, weight);
     }
 
     @PostMapping
-    public FoodDto postFood(@RequestBody Food food){
-        return foodFacade.createFood(food);
+    public FoodDto createFood(@Valid @RequestBody FoodDto foodDto){
+        return foodFacade.createFood(foodDto);
     }
 
     @PutMapping("/{id}")
-    public FoodDto updateFood(@PathVariable long id, @RequestBody Food food){
-        return foodFacade.updateFood(id, food);
+    public FoodDto updateFood(@Valid @PathVariable Long id, @RequestBody FoodDto foodDto){
+        return foodFacade.updateFood(id, foodDto);
     }
 
     @DeleteMapping("/{id}")
-    public FoodDto deleteFood(@PathVariable long id){
+    public FoodDto deleteFood(@PathVariable Long id){
         System.out.println("The food with id " + id + " was deleted.");
         return foodFacade.deleteFood(id);
     }

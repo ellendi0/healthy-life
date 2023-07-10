@@ -1,9 +1,8 @@
 package com.webapp.app_rest_api.controller.facade;
 
 import com.webapp.app_rest_api.dto.PostDto;
-import com.webapp.app_rest_api.model.entities.Post;
 import com.webapp.app_rest_api.model.mapper.PostMapper;
-import com.webapp.app_rest_api.service.PostService;
+import com.webapp.app_rest_api.service.impl.PostService;
 import org.springframework.stereotype.Component;
 import java.util.List;
 
@@ -17,8 +16,8 @@ public class PostFacade {
         this.postMapper = postMapper;
     }
 
-    public PostDto createPost(Post post) {
-        return postMapper.mapToDto(postService.createPost(post));
+    public PostDto createPost(PostDto postDto) {
+        return postMapper.mapToDto(postService.createPost(postMapper.mapToEntity(postDto)));
     }
 
     public PostDto getPost(Long id) {
@@ -31,8 +30,8 @@ public class PostFacade {
                 .toList();
     }
 
-    public PostDto updatePost(Long id, Post post) {
-        return postMapper.mapToDto(postService.updatePost(id, post));
+    public PostDto updatePost(Long id, PostDto postDto) {
+        return postMapper.mapToDto(postService.updatePost(id, postMapper.mapToEntity(postDto)));
     }
 
     public PostDto deletePost(Long id) {

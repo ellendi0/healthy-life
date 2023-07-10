@@ -5,7 +5,7 @@ public enum Activity {
     LIGHTLY_ACTIVE, //light exercise or sports 1-3 days per week
     MODERATELY_ACTIVE, //moderate exercise or sports 3-5 days per week
     VERY_ACTIVE, //hard exercise or sports 6-7 days per week
-    EXTRA_ACTIVE;//very hard exercise or sports, physical job or training twice a day
+    EXTRA_ACTIVE; //very hard exercise or sports, physical job or training twice a day
 
     public double getALF(){
         return switch (this) {
