@@ -1,16 +1,15 @@
-package com.webapp.app_rest_api.service;
+package com.webapp.app_rest_api.service.impl;
 
 import com.webapp.app_rest_api.dto.BearerToken;
 import com.webapp.app_rest_api.dto.LoginDto;
 import com.webapp.app_rest_api.dto.RegisterDto;
-import com.webapp.app_rest_api.model.entities.Diet;
 import com.webapp.app_rest_api.model.entities.PersonalInfo;
 import com.webapp.app_rest_api.model.entities.Role;
 import com.webapp.app_rest_api.model.entities.User;
 import com.webapp.app_rest_api.model.mapper.UserMapper;
-import com.webapp.app_rest_api.repository.RoleRepository;
 import com.webapp.app_rest_api.repository.UserRepository;
 import com.webapp.app_rest_api.security.JwtUtilities;
+import com.webapp.app_rest_api.service.IUserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,7 +27,7 @@ import java.util.*;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements IUserService {
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
     private final RoleService roleService;
@@ -37,6 +36,7 @@ public class UserService {
     private final JwtUtilities jwtUtilities;
     private final UserMapper mapper;
 
+    @Override
     public ResponseEntity<?> register(RegisterDto registerDto) {
         if (userRepository.existsByEmail(registerDto.getEmail())) {
             return new ResponseEntity<>("Email is already taken", HttpStatus.SEE_OTHER);
@@ -61,6 +61,7 @@ public class UserService {
         }
     }
 
+    @Override
     public String authenticate(LoginDto loginDto) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(

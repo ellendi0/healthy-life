@@ -1,4 +1,4 @@
-package com.webapp.app_rest_api.service;
+package com.webapp.app_rest_api.service.impl;
 
 import com.webapp.app_rest_api.exception.ResourceNotFoundException;
 import com.webapp.app_rest_api.model.entities.*;
@@ -6,13 +6,14 @@ import com.webapp.app_rest_api.model.entities.connection.FoodToMeal;
 import com.webapp.app_rest_api.model.entities.connection.RecipeToMeal;
 import com.webapp.app_rest_api.model.enums.TypeOfMeal;
 import com.webapp.app_rest_api.repository.*;
+import com.webapp.app_rest_api.service.IMealService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
 @Service
-public class MealService {
+public class MealService implements IMealService {
     private final MealRepository mealRepository;
     private final FoodService foodService;
     private final RecipeService recipeService;
@@ -31,25 +32,31 @@ public class MealService {
         this.recipeToMealService = recipeToMealService;
     }
 
+    @Override
     public Meal createUpdateMeal(Meal meal) {
         return mealRepository.save(meal);
     }
+
     public Meal getMeal(Long id) {
         return mealRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Meal", "id", String.valueOf(id)));
     }
 
-    public Meal createMeal(TypeOfMeal typeOfMeal){
+    @Override
+    public Meal createMeal(TypeOfMeal typeOfMeal) {
         Meal meal = new Meal();
         meal.setTypeOfMeal(typeOfMeal);
         return createUpdateMeal(meal);
     }
+
+    @Override
     public List<Meal> getAllMeals() {
         return mealRepository.findAll();
     }
 
+    @Override
     @Transactional
-    public Meal addFoodToMeal(long mealId, long foodId, double weight) {
+    public Meal addFoodToMeal(Long mealId, Long foodId, Double weight) {
         Meal meal = getMeal(mealId);
         FoodToMeal foodToMeal = foodToMealService.getFoodToMealById(mealId, foodId);
 
@@ -67,18 +74,19 @@ public class MealService {
         return meal;
     }
 
+    @Override
     @Transactional
-    public Meal addRecipeToMeal(long mealId, long recipeId, double weight) {
+    public Meal addRecipeToMeal(Long mealId, Long recipeId, Double weight) {
         Meal meal = getMeal(mealId);
 
         RecipeToMeal recipeToMeal = recipeToMealService.getRecipeByMealIdAndRecipeId(mealId, recipeId);
 
-        if(Objects.isNull(recipeToMeal)){
+        if (Objects.isNull(recipeToMeal)) {
             Recipe recipe = recipeService.getRecipe(recipeId);
             recipeToMeal = new RecipeToMeal(recipe, meal, weight);
             meal.getRecipe().add(recipeToMeal);
             recipe.getMeal().add(recipeToMeal);
-        }else{
+        } else {
             recipeToMeal.setWeight(recipeToMeal.getWeight() + weight);
         }
         recipeToMealService.createUpdateRecipeToMeal(recipeToMeal);
@@ -86,30 +94,36 @@ public class MealService {
         return meal;
     }
 
-    public Meal updateFoodInMeal(long mealId, long foodId, double weight) {
+    @Override
+    public Meal updateFoodInMeal(Long mealId, Long foodId, Double weight) {
         foodToMealService.updateFoodToMeal(mealId, foodId, weight);
         return getMeal(mealId);
     }
 
-    public Meal updateRecipeInMeal(long mealId, long recipeId, double weight) {
+    @Override
+    public Meal updateRecipeInMeal(Long mealId, Long recipeId, Double weight) {
         recipeToMealService.updateRecipeToMeal(mealId, recipeId, weight);
         return getMeal(mealId);
     }
 
+    @Override
     @Transactional
-    public void deleteFoodFromMeal(long mealId, long foodId) {
+    public void deleteFoodFromMeal(Long mealId, Long foodId) {
         foodToMealService.deleteFoodToMeal(mealId, foodId);
     }
 
+    @Override
     @Transactional
-    public void deleteRecipeFromMeal(long mealId, long recipeId) {
+    public void deleteRecipeFromMeal(Long mealId, Long recipeId) {
         recipeToMealService.deleteByMealIdAndRecipeId(mealId, recipeId);
     }
 
-    public void deleteMeal(long mealId) {
+    @Override
+    public void deleteMeal(Long mealId) {
         mealRepository.deleteById(mealId);
     }
 
+    @Override
     public void deleteAllMeals() {
         mealRepository.deleteAll();
     }

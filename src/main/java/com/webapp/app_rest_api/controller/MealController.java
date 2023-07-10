@@ -2,7 +2,7 @@ package com.webapp.app_rest_api.controller;
 
 import com.webapp.app_rest_api.controller.facade.MealFacade;
 import com.webapp.app_rest_api.dto.MealDto;
-import com.webapp.app_rest_api.model.entities.Meal;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,7 +17,7 @@ public class MealController {
     }
 
     @GetMapping("/{id}")
-    public MealDto getMeal(@PathVariable long id){
+    public MealDto getMeal(@PathVariable Long id){
         return mealFacade.getMeal(id);
     }
 
@@ -27,44 +27,44 @@ public class MealController {
     }
 
     @PostMapping
-    public MealDto createMeal(@RequestBody Meal meal){
-        return mealFacade.createUpdateMeal(meal);
+    public MealDto createMeal(@Valid @RequestBody MealDto mealDto){
+        return mealFacade.createUpdateMeal(mealDto);
     }
 
     @PostMapping({"/{mealId}/addfood/{foodId}/{weight}"})
-    public MealDto addFoodToMeal(@PathVariable long mealId, @PathVariable long foodId, @PathVariable double weight){
+    public MealDto addFoodToMeal(@PathVariable Long mealId, @PathVariable Long foodId, @PathVariable Double weight){
         return mealFacade.addFoodToMeal(mealId, foodId, weight);
     }
 
     @PostMapping({"/{mealId}/addrecipe/{recipeId}/{weight}"})
-    public MealDto addRecipeToMeal(@PathVariable long mealId, @PathVariable long recipeId, @PathVariable double weight){
+    public MealDto addRecipeToMeal(@PathVariable Long mealId, @PathVariable Long recipeId, @PathVariable Double weight){
         return mealFacade.addRecipeToMeal(mealId, recipeId, weight);
     }
 
     @PutMapping("/{mealId}/changerecipe/{recipeId}/{weight}")
-    public MealDto changeRecipeInMeal(@PathVariable long mealId, @PathVariable long recipeId, @PathVariable double weight){
+    public MealDto changeRecipeInMeal(@PathVariable Long mealId, @PathVariable Long recipeId, @PathVariable Double weight){
         return mealFacade.updateRecipeInMeal(mealId, recipeId, weight);
     }
 
     @PutMapping("/{mealId}/changefood/{foodId}/{weight}")
-    public MealDto changeFoodInMeal(@PathVariable long mealId, @PathVariable long foodId, @PathVariable double weight){
+    public MealDto changeFoodInMeal(@PathVariable Long mealId, @PathVariable Long foodId, @PathVariable Double weight){
         return mealFacade.updateFoodInMeal(mealId, foodId, weight);
     }
 
     @DeleteMapping("/{mealId}/deleterecipe/{recipeId}")
-    public MealDto deleteRecipeFromMeal(@PathVariable long mealId, @PathVariable long recipeId){
+    public MealDto deleteRecipeFromMeal(@PathVariable Long mealId, @PathVariable Long recipeId){
         System.out.println("The recipe with id " + recipeId + " was deleted from meal");
         return mealFacade.deleteRecipeFromMeal(mealId, recipeId);
     }
 
     @DeleteMapping({"/{mealId}/deletefood/{foodId}"})
-    public MealDto deleteFoodFromMeal(@PathVariable long mealId, @PathVariable long foodId){
+    public MealDto deleteFoodFromMeal(@PathVariable Long mealId, @PathVariable Long foodId){
         System.out.println("The food with id " + foodId + " was deleted from meal");
         return mealFacade.deleteFoodFromMeal(mealId, foodId);
     }
 
     @DeleteMapping("/{id}")
-    public MealDto deleteMeal(@PathVariable long id){
+    public MealDto deleteMeal(@PathVariable Long id){
         System.out.println("The meal with id " + id + " was deleted");
         return mealFacade.deleteMeal(id);
     }

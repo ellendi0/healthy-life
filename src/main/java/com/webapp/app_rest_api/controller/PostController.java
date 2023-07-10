@@ -3,7 +3,7 @@ package com.webapp.app_rest_api.controller;
 
 import com.webapp.app_rest_api.controller.facade.PostFacade;
 import com.webapp.app_rest_api.dto.PostDto;
-import com.webapp.app_rest_api.model.entities.Post;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/posts")
 public class PostController {
-    private PostFacade postFacade;
+    private final PostFacade postFacade;
 
     public PostController(PostFacade postFacade) {
         this.postFacade = postFacade;
@@ -28,17 +28,17 @@ public class PostController {
     }
 
     @PostMapping
-    public PostDto createPost(@RequestBody Post post){
-        return postFacade.createPost(post);
+    public PostDto createPost(@Valid @RequestBody PostDto postDto){
+        return postFacade.createPost(postDto);
     }
 
     @PutMapping("/{id}")
-    public PostDto updatePost(@PathVariable Long id, @RequestBody Post post){
-        return postFacade.updatePost(id, post);
+    public PostDto updatePost(@Valid@PathVariable Long id, @RequestBody PostDto postDto){
+        return postFacade.updatePost(id, postDto);
     }
 
     @DeleteMapping("/{id}")
-    public PostDto deletePost(@PathVariable long id){
+    public PostDto deletePost(@PathVariable Long id){
         System.out.println("The post with id " + id + " was deleted.");
         return postFacade.deletePost(id);
     }

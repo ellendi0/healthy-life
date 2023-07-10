@@ -2,7 +2,7 @@ package com.webapp.app_rest_api.controller;
 
 import com.webapp.app_rest_api.controller.facade.RecipeFacade;
 import com.webapp.app_rest_api.dto.RecipeDto;
-import com.webapp.app_rest_api.model.entities.Recipe;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.List;
 @RequestMapping("/api/recipe")
 public class RecipeController {
 
-    private RecipeFacade recipeFacade;
+    private final RecipeFacade recipeFacade;
 
     public RecipeController(RecipeFacade recipeFacade) {
         this.recipeFacade = recipeFacade;
@@ -28,13 +28,13 @@ public class RecipeController {
     }
 
     @PostMapping
-    public RecipeDto createRecipe(@RequestBody Recipe recipe) {
-        return recipeFacade.createRecipe(recipe);
+    public RecipeDto createRecipe(@Valid @RequestBody RecipeDto recipeDto) {
+        return recipeFacade.createRecipe(recipeDto);
     }
 
     @PutMapping({"/{id}"})
-    public RecipeDto updateRecipe(@PathVariable Long id, @RequestBody Recipe recipe) {
-        return recipeFacade.updateRecipe(id, recipe);
+    public RecipeDto updateRecipe(@Valid @PathVariable Long id, @RequestBody RecipeDto recipeDto) {
+        return recipeFacade.updateRecipe(id, recipeDto);
     }
 
     @GetMapping({"/{id}/weight/{weight}"})

@@ -2,7 +2,8 @@ package com.webapp.app_rest_api.controller;
 
 import com.webapp.app_rest_api.dto.LoginDto;
 import com.webapp.app_rest_api.dto.RegisterDto;
-import com.webapp.app_rest_api.service.UserService;
+import com.webapp.app_rest_api.service.impl.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,12 +18,12 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterDto registerDto) {
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterDto registerDto) {
         return userService.register(registerDto);
     }
 
     @PostMapping("/authenticate")
-    public String authenticate(@RequestBody LoginDto loginDto) {
+    public String authenticate(@Valid @RequestBody LoginDto loginDto) {
         return userService.authenticate(loginDto);
     }
 }

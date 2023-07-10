@@ -1,14 +1,15 @@
-package com.webapp.app_rest_api.service;
+package com.webapp.app_rest_api.service.impl;
 
 import com.webapp.app_rest_api.exception.ResourceNotFoundException;
 import com.webapp.app_rest_api.model.entities.DayDiet;
 import com.webapp.app_rest_api.model.entities.Meal;
 import com.webapp.app_rest_api.model.enums.TypeOfMeal;
 import com.webapp.app_rest_api.repository.DayDietRepository;
+import com.webapp.app_rest_api.service.IDayDietService;
 import org.springframework.stereotype.Service;
 
 @Service
-public class DayDietService {
+public class DayDietService implements IDayDietService {
     private final DayDietRepository dayDietRepository;
     private final MealService mealService;
 
@@ -17,10 +18,12 @@ public class DayDietService {
         this.mealService = mealService;
     }
 
-
+    @Override
     public DayDiet createUpdateDayDiet(DayDiet dayDiet) {
         return dayDietRepository.save(dayDiet);
     }
+
+    @Override
     public DayDiet createUpdateDayDiet() {
         DayDiet dayDiet = new DayDiet();
         dayDiet.setDate(java.time.LocalDate.now());
@@ -31,12 +34,14 @@ public class DayDietService {
         return dayDietRepository.save(dayDiet);
     }
 
+    @Override
     public DayDiet getDietDay(Long id) {
         return dayDietRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("DietDay", "id", String.valueOf(id)));
     }
 
-    public DayDiet addMealToDietDay(Long dietDayId, Long mealId){
+    @Override
+    public DayDiet addMealToDietDay(Long dietDayId, Long mealId) {
         DayDiet dayDiet = getDietDay(dietDayId);
         dayDiet.getMeals().add(mealService.getMeal(mealId));
         dayDietRepository.save(dayDiet);
@@ -44,18 +49,22 @@ public class DayDietService {
 
     }
 
-    public DayDiet removeMealFromDietDay(Long dietDayId, Long mealId){
+    @Override
+    public DayDiet removeMealFromDietDay(Long dietDayId, Long mealId) {
         DayDiet dayDiet = getDietDay(dietDayId);
         dayDiet.getMeals().remove(mealService.getMeal(mealId));
         dayDietRepository.save(dayDiet);
         return countMealsNutrition(dietDayId);
     }
 
-    public void deleteDietDay(Long id) {
+    @Override
+    public DayDiet deleteDietDay(Long id) {
+        DayDiet dayDiet = getDietDay(id);
         dayDietRepository.deleteById(id);
+        return dayDiet;
     }
 
-    public DayDiet countMealsNutrition(Long id){
+    public DayDiet countMealsNutrition(Long id) {
         DayDiet dayDiet = getDietDay(id);
         double totalNumberOfDailyCalories = 0;
         double totalNumberOfProtein = 0;

@@ -1,7 +1,9 @@
 package com.webapp.app_rest_api.model.mapper;
 
 import com.webapp.app_rest_api.model.entities.GenderCoefficient;
+import org.springframework.stereotype.Component;
 
+@Component
 public class GenderCoefficientMapper {
     public GenderCoefficient map(GenderCoefficient genderCoefficient, GenderCoefficient genderCoefficientToUpdate) {
         genderCoefficientToUpdate.setBmr_base(genderCoefficient.getBmr_base());

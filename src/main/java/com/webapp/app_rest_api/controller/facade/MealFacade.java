@@ -5,7 +5,7 @@ import com.webapp.app_rest_api.dto.MealDto;
 import com.webapp.app_rest_api.dto.RecipeDto;
 import com.webapp.app_rest_api.model.entities.*;
 import com.webapp.app_rest_api.model.mapper.MealMapper;
-import com.webapp.app_rest_api.service.MealService;
+import com.webapp.app_rest_api.service.impl.MealService;
 import org.springframework.stereotype.Component;
 import java.util.List;
 
@@ -20,8 +20,8 @@ public class MealFacade {
         this.mealMapper = mealMapper;
     }
 
-    public MealDto createUpdateMeal(Meal meal) {
-        return mealMapper.mapToDto(mealService.createUpdateMeal(meal));
+    public MealDto createUpdateMeal(MealDto mealDto) {
+        return mealMapper.mapToDto(mealService.createUpdateMeal(mealMapper.mapToEntity(mealDto)));
     }
     public MealDto getMeal(Long id) {
         return mealMapper.mapToDto(mealService.getMeal(id));
@@ -63,7 +63,7 @@ public class MealFacade {
         return countNutritiousFromFoodList(mealId);
     }
 
-    public MealDto deleteMeal(long mealId) {
+    public MealDto deleteMeal(Long mealId) {
         MealDto mealDto = mealMapper.mapToDto(mealService.getMeal(mealId));
         mealService.deleteMeal(mealId);
         return mealDto;

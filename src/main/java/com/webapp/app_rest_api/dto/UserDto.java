@@ -16,14 +16,11 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class UserDto {
-    @NotEmpty
+    @NotEmpty(message = "Username cannot be empty")
     private String username;
 
-    @Email
+    @Email(message = "Email should be valid")
     @NotEmpty(message = "Email cannot be empty")
     private String email;
-
-    private String token;
 }
