@@ -1,17 +1,13 @@
 package com.webapp.app_rest_api.service;
 
-import com.webapp.app_rest_api.exception.ResourceNotFoundException;
 import com.webapp.app_rest_api.model.entities.Diet;
 import com.webapp.app_rest_api.model.entities.PersonalInfo;
 
 public interface IDietService {
-    Diet createDiet(PersonalInfo personalInfo);
-
-    Diet createUpdateDiet(Diet diet);
-
+    Diet createCustomDiet(PersonalInfo personalInfo);
+    Diet createCustomDiet(PersonalInfo personalInfo, Diet diet);
     Diet getDietById(Long id);
-
-    Diet updateDiet(Long id, Double calories);
-
+    Diet updateDiet(PersonalInfo personalInfo, Double calories);
+    Diet getDietByUser(PersonalInfo personalInfo);
     Diet deleteDiet(Long id);
 }

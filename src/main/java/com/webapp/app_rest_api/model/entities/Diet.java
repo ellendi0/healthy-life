@@ -1,15 +1,9 @@
 package com.webapp.app_rest_api.model.entities;
 
-import com.webapp.app_rest_api.model.enums.Activity;
-import com.webapp.app_rest_api.model.enums.Goal;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Generated;
 import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @Entity

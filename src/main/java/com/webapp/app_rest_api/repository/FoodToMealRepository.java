@@ -8,7 +8,7 @@ import java.util.Optional;
 
 @Repository
 public interface FoodToMealRepository extends JpaRepository<FoodToMeal, Long>{
-    Optional<FoodToMeal> getFoodToMealByMealIdAndFoodId(long mealId, long foodId);
-    void deleteFoodToMealByMeal_IdAndFood_Id(long mealId, long foodId);
-    Boolean existsByMealIdAndFoodId(long mealId, long foodId);
+    Optional<FoodToMeal> findFoodToMealByMealIdAndFoodId(Long mealId, Long foodId);
+    void deleteFoodToMealByMeal_IdAndFood_Id(Long mealId, Long foodId);
+    Boolean existsByMealIdAndFoodId(Long mealId, Long foodId);
 }

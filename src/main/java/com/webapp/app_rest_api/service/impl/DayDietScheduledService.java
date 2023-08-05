@@ -24,6 +24,6 @@ public class DayDietScheduledService implements IDayDietScheduledService {
     @Scheduled(cron = "0 0 0 * * *")
     public void generateDayDiet() {
         List<PersonalInfo> personalInfo = personalInfoService.getAllUserAccountNonLocked();
-        personalInfo.forEach(p -> p.getDayDiets().add(dayDietService.createUpdateDayDiet()));
+        personalInfo.forEach(dayDietService::createUpdateDayDiet);
     }
 }

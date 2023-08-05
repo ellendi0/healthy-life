@@ -7,6 +7,7 @@ import com.webapp.app_rest_api.model.entities.*;
 import com.webapp.app_rest_api.model.mapper.MealMapper;
 import com.webapp.app_rest_api.service.impl.MealService;
 import org.springframework.stereotype.Component;
+
 import java.util.List;
 
 @Component
@@ -21,56 +22,60 @@ public class MealFacade {
     }
 
     public MealDto createUpdateMeal(MealDto mealDto) {
-        return mealMapper.mapToDto(mealService.createUpdateMeal(mealMapper.mapToEntity(mealDto)));
-    }
-    public MealDto getMeal(Long id) {
-        return mealMapper.mapToDto(mealService.getMeal(id));
+        return mealMapper.mapToDto(mealService.createSaveMeal(mealMapper.mapToEntity(mealDto)));
     }
 
-    public List<MealDto> getAllMeals() {
-        return mealService.getAllMeals().stream()
+    public MealDto getMealByUserAndMealId(User user, Long mealId) {
+        return mealMapper.mapToDto(mealService.getMealByUserAndMealId(user.getPersonalInfo(), mealId));
+    }
+
+    public List<MealDto> getAllMeals(User user, Long dayDietId) {
+        return mealService.getAllMealsByDayDiet(user.getPersonalInfo(), dayDietId).stream()
                 .map(mealMapper::mapToDto)
                 .toList();
     }
 
-    public MealDto addFoodToMeal(Long mealId, Long foodId, Double weight) {
-        mealService.addFoodToMeal(mealId, foodId, weight);
+    public MealDto addFoodToMeal(User user, Long mealId, Long foodId, Double weight) {
+        mealService.addFoodToMeal(user.getPersonalInfo(), mealId, foodId, weight);
         return countNutritiousFromFoodList(mealId);
     }
 
-    public MealDto addRecipeToMeal(Long mealId, Long recipeId, Double weight) {
-        mealService.addRecipeToMeal(mealId, recipeId, weight);
+    public MealDto addRecipeToMeal(User user, Long mealId, Long recipeId, Double weight) {
+        mealService.addRecipeToMeal(user.getPersonalInfo(), mealId, recipeId, weight);
         return countNutritiousFromFoodList(mealId);
     }
 
-    public MealDto updateFoodInMeal(Long mealId, Long foodId, Double weight) {
-        mealService.updateFoodInMeal(mealId, foodId, weight);
+    public MealDto updateFoodInMeal(User user, Long mealId, Long foodId, Double weight) {
+        mealService.updateFoodInMeal(user.getPersonalInfo(), mealId, foodId, weight);
         return countNutritiousFromFoodList(mealId);
     }
 
-    public MealDto updateRecipeInMeal(Long mealId, Long recipeId, Double weight) {
-        mealService.updateRecipeInMeal(mealId, recipeId, weight);
+    public MealDto updateRecipeInMeal(User user, Long mealId, Long recipeId, Double weight) {
+        mealService.updateRecipeInMeal(user.getPersonalInfo(), mealId, recipeId, weight);
         return countNutritiousFromFoodList(mealId);
     }
 
-    public MealDto deleteFoodFromMeal(Long mealId, Long foodId) {
-        mealService.deleteFoodFromMeal(mealId, foodId);
+    public MealDto deleteFoodFromMeal(User user, Long mealId, Long foodId) {
+        mealService.deleteFoodFromMeal(user.getPersonalInfo(), mealId, foodId);
+        System.out.println("The food with id " + foodId + " was deleted from meal");
         return countNutritiousFromFoodList(mealId);
     }
 
-    public MealDto deleteRecipeFromMeal(Long mealId, Long recipeId) {
-        mealService.deleteRecipeFromMeal(mealId, recipeId);
+    public MealDto deleteRecipeFromMeal(User user, Long mealId, Long recipeId) {
+        mealService.deleteRecipeFromMeal(user.getPersonalInfo(), mealId, recipeId);
+        System.out.println("The recipe with id " + recipeId + " was deleted from meal");
         return countNutritiousFromFoodList(mealId);
     }
 
-    public MealDto deleteMeal(Long mealId) {
-        MealDto mealDto = mealMapper.mapToDto(mealService.getMeal(mealId));
+    public MealDto deleteMeal(User user, Long mealId) {
         mealService.deleteMeal(mealId);
-        return mealDto;
+        System.out.println("The meal with id " + mealId + " was deleted");
+        return mealMapper.mapToDto(mealService.getMealByUserAndMealId(user.getPersonalInfo(), mealId));
     }
 
-    public void deleteAllMeals() {
+    public String deleteAllMeals() {
         mealService.deleteAllMeals();
+        return "All meals deleted";
     }
 
     public MealDto countNutritiousFromFoodList(Long mealId) {
@@ -82,7 +87,7 @@ public class MealFacade {
         double fiber = 0;
         double sugar = 0;
 
-        Meal meal = mealService.getMeal(mealId);
+        Meal meal = mealService.getMealById(mealId);
         MealDto mealDto = mealMapper.mapToDto(meal);
 
         if (mealDto.getFood() != null) {
@@ -116,8 +121,7 @@ public class MealFacade {
         meal.setNumberOfFiber(fiber);
         meal.setNumberOfSugar(sugar);
 
-        mealService.createUpdateMeal(meal);
-        return mealMapper.mapToDto(mealService.getMeal(mealId));
+        return mealMapper.mapToDto(mealService.createSaveMeal(meal));
     }
 
 }

@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class DayDietMapper {
@@ -28,7 +27,7 @@ public class DayDietMapper {
         dayDietDto.setTotalNumberOfFat(dayDiet.getTotalNumberOfFat());
         dayDietDto.setTotalNumberOfFiber(dayDiet.getTotalNumberOfFiber());
         dayDietDto.setTotalNumberOfSugar(dayDiet.getTotalNumberOfSugar());
-        dayDietDto.setMeals(mapToMealDtoList(dayDiet.getMeals()));
+        dayDietDto.getMeals().addAll(mapToMealDtoList(dayDiet.getMeals()));
         return dayDietDto;
     }
 

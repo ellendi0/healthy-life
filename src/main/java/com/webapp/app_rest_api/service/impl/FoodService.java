@@ -17,7 +17,6 @@ import java.util.List;
 
 @Service
 public class FoodService implements IFoodService {
-
     private final FoodRepository foodRepository;
     private final FoodMapper foodMapper;
 

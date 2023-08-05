@@ -2,6 +2,7 @@ package com.webapp.app_rest_api.controller.facade;
 
 import com.webapp.app_rest_api.dto.FoodDto;
 import com.webapp.app_rest_api.dto.RecipeDto;
+import com.webapp.app_rest_api.model.entities.PersonalInfo;
 import com.webapp.app_rest_api.model.entities.Recipe;
 import com.webapp.app_rest_api.model.mapper.RecipeMapper;
 import com.webapp.app_rest_api.service.impl.RecipeService;
@@ -19,51 +20,60 @@ public class RecipeFacade {
         this.recipeMapper = recipeMapper;
     }
 
-    public RecipeDto createRecipe(RecipeDto recipeDto) {
-        return recipeMapper.mapToDto(recipeService.createUpdateRecipe(recipeMapper.mapToEntity(recipeDto)));
+    public RecipeDto createRecipe(PersonalInfo personalInfo, RecipeDto recipeDto) {
+        return recipeMapper.mapToDto(recipeService.createRecipe(personalInfo, recipeMapper.mapToEntity(recipeDto)));
     }
 
-    public RecipeDto getRecipe(Long id) {
-        return recipeMapper.mapToDto(recipeService.getRecipe(id));
+    public RecipeDto getPublicRecipe(Long id) {
+        return recipeMapper.mapToDto(recipeService.getPublicRecipe(id));
     }
 
-    public List<RecipeDto> getAllRecipe() {
-        return recipeService.getAllRecipe().stream()
+    public RecipeDto getRecipeForUser(PersonalInfo personalInfo, Long userId) {
+        return recipeMapper.mapToDto(recipeService.getRecipeForUser(personalInfo, userId));
+    }
+
+    public List<RecipeDto> getAllPublicRecipe() {
+        return recipeService.getAllPublicRecipe().stream()
                 .map(recipeMapper::mapToDto)
                 .toList();
     }
 
-    public RecipeDto updateRecipe(Long id, RecipeDto recipeDto) {
-        return recipeMapper.mapToDto(recipeService.updateRecipe(id, recipeMapper.mapToEntity(recipeDto)));
+    public List<RecipeDto> getAllRecipe(PersonalInfo personalInfo) {
+        return recipeService.getAllRecipe(personalInfo).stream()
+                .map(recipeMapper::mapToDto)
+                .toList();
     }
 
-    public RecipeDto addFoodToRecipe(Long recipeId, Long foodId, Double weight) {
-        recipeService.addFoodToRecipe(recipeId, foodId, weight);
+    public RecipeDto updateRecipe(PersonalInfo personalInfo, Long id, RecipeDto recipeDto) {
+        return recipeMapper.mapToDto(recipeService.updateRecipe(personalInfo, id, recipeMapper.mapToEntity(recipeDto)));
+    }
+
+    public RecipeDto addFoodToRecipe(PersonalInfo personalInfo, Long recipeId, Long foodId, Double weight) {
+        recipeService.addFoodToRecipe(personalInfo, recipeId, foodId, weight);
         countNutritiousFromFoodList(recipeId);
-        return recipeMapper.mapToDto(recipeService.getRecipe(recipeId));
+        return recipeMapper.mapToDto(recipeService.getRecipeForUser(personalInfo, recipeId));
     }
 
-    public RecipeDto updateFoodInRecipe(Long recipeId, Long foodId, Double weight) {
-        recipeService.updateFoodInRecipe(recipeId, foodId, weight);
+    public RecipeDto updateFoodInRecipe(PersonalInfo personalInfo, Long recipeId, Long foodId, Double weight) {
+        recipeService.updateFoodInRecipe(personalInfo, recipeId, foodId, weight);
         countNutritiousFromFoodList(recipeId);
-        return recipeMapper.mapToDto(recipeService.getRecipe(recipeId));
+        return recipeMapper.mapToDto(recipeService.getRecipeForUser(personalInfo, recipeId));
     }
 
-    public RecipeDto deleteRecipe(Long id) {
-        RecipeDto recipeDto = recipeMapper.mapToDto(recipeService.getRecipe(id));
-        recipeService.deleteRecipe(id);
+    public RecipeDto deleteRecipe(PersonalInfo personalInfo, Long id) {
+        RecipeDto recipeDto = recipeMapper.mapToDto(recipeService.getRecipeForUser(personalInfo, id));
+        recipeService.deleteRecipe(personalInfo, id);
         return recipeDto;
     }
 
-    public void deleteAllRecipe() {
-        recipeService.deleteAllRecipe();
+    public String deleteAllRecipe(PersonalInfo personalInfo) {
+        recipeService.deleteAllRecipe(personalInfo);
+        return "All recipes have been deleted";
     }
 
-    public RecipeDto deleteFoodFromRecipe(Long recipeId, Long foodId) {
-        RecipeDto recipeDto = recipeMapper.mapToDto(recipeService.getRecipe(recipeId));
-        recipeService.deleteFoodFromRecipe(recipeId, foodId);
-        countNutritiousFromFoodList(recipeId);
-        return recipeDto;
+    public RecipeDto deleteFoodFromRecipe(PersonalInfo personalInfo, Long recipeId, Long foodId) {
+        recipeService.deleteFoodFromRecipe(personalInfo, recipeId, foodId);
+        return countNutritiousFromFoodList(recipeId);
     }
 
     public RecipeDto countNutritiousFromFoodList(Long recipeId) {
@@ -78,7 +88,7 @@ public class RecipeFacade {
         Recipe recipe = recipeService.getRecipe(recipeId);
         RecipeDto recipeDto = recipeMapper.mapToDto(recipe);
 
-        if(recipeDto.getFood() != null) {
+        if (recipeDto.getFood() != null) {
             for (FoodDto foodDto : recipeDto.getFood()) {
                 calories += foodDto.getNumberOfCalories();
                 proteins += foodDto.getNumberOfProtein();
@@ -98,12 +108,11 @@ public class RecipeFacade {
         recipe.setNumberOfFiber(fiber);
         recipe.setNumberOfSugar(sugar);
 
-        recipeService.createUpdateRecipe(recipe);
-        return recipeDto;
+        return recipeMapper.mapToDto(recipeService.createSaveRecipe(recipe));
     }
 
     public RecipeDto getRecipeWithGivenWeight(Long recipeId, Double weight) {
-        Recipe recipe = recipeService.getRecipe(recipeId);
+        Recipe recipe = recipeService.getPublicRecipe(recipeId);
         return recipeMapper.mapToDto(recipe, weight);
     }
 }

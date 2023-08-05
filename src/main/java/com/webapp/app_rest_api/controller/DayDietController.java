@@ -2,10 +2,15 @@ package com.webapp.app_rest_api.controller;
 
 import com.webapp.app_rest_api.controller.facade.DayDietFacade;
 import com.webapp.app_rest_api.dto.DayDietDto;
+import com.webapp.app_rest_api.model.entities.User;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/api/user/daydiet")
+@RequestMapping("/api/user/dayDiet")
 public class DayDietController {
     private final DayDietFacade dayDietFacade;
 
@@ -13,30 +18,44 @@ public class DayDietController {
         this.dayDietFacade = dayDietFacade;
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
-    public DayDietDto createUpdateDayDiet(@RequestBody DayDietDto dayDietDto) {
-        return dayDietFacade.createUpdateDayDiet(dayDietDto);
+        public DayDietDto createUpdateDayDiet(@AuthenticationPrincipal User user,
+                                              @RequestBody DayDietDto dayDietDto) {
+        return dayDietFacade.createUpdateDayDiet(user, dayDietDto);
     }
 
-    @GetMapping("/{id}")
-    public DayDietDto getDietDay(@PathVariable Long id) {
-        return dayDietFacade.getDietDay(id);
+    @GetMapping("{id}")
+    public DayDietDto getDayDiet(@AuthenticationPrincipal User user,
+                                 @RequestParam(value = "id") Long id) {
+        return dayDietFacade.getDietDay(user, id);
     }
 
-    @PutMapping("/{dietDayId}/meal/{mealId}")
-    public DayDietDto addMealToDietDay(@PathVariable Long dietDayId, @PathVariable Long mealId){
-        return dayDietFacade.addMealToDietDay(dietDayId, mealId);
+    @GetMapping("/all")
+    public List<DayDietDto> getAllDayDiet(@AuthenticationPrincipal User user) {
+        return dayDietFacade.getAllDayDietsByPersonalInfo(user);
     }
 
-    @DeleteMapping("/{dietDayId}/meal/{mealId}")
-    public DayDietDto removeMealFromDietDay(@PathVariable Long dietDayId, @PathVariable Long mealId){
-        System.out.println("The meal with id " + mealId + " has been removed from the diet day with id " + dietDayId + ".");
-        return dayDietFacade.removeMealFromDietDay(dietDayId, mealId);
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("{dayDietId}/meal/{mealId}")
+    public DayDietDto addMealToDayDiet(@AuthenticationPrincipal User user,
+                                       @PathVariable(value = "dayDietId") Long dietDayId,
+                                       @PathVariable(value = "mealId") Long mealId){
+        return dayDietFacade.addMealToDietDay(user, dietDayId, mealId);
     }
 
-    @DeleteMapping("/{id}")
-    public DayDietDto deleteDietDay(@PathVariable Long id) {
-        System.out.println("The diet day with id " + id + " has been deleted.");
-        return dayDietFacade.deleteDietDay(id);
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @DeleteMapping("{dayDietId}/meal/{mealId}")
+    public DayDietDto removeMealFromDayDiet(@AuthenticationPrincipal User user,
+                                            @PathVariable(value = "dayDietId") Long dietDayId,
+                                            @PathVariable(value = "mealId") Long mealId){
+        return dayDietFacade.removeMealFromDietDay(user, dietDayId, mealId);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @DeleteMapping("{id}")
+    public DayDietDto deleteDayDiet(@AuthenticationPrincipal User user,
+                                    @PathVariable Long id) {
+        return dayDietFacade.deleteDietDay(user, id);
     }
 }

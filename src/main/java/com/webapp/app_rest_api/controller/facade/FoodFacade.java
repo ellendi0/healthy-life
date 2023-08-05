@@ -39,6 +39,7 @@ public class FoodFacade {
     public FoodDto deleteFood(Long id) {
         FoodDto foodDto = foodMapper.mapToDto(foodService.getFoodById(id));
         foodService.deleteFood(id);
+        System.out.println("The food with id " + id + " was deleted.");
         return foodDto;
     }
 

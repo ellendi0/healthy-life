@@ -1,21 +1,20 @@
 package com.webapp.app_rest_api.service;
 
-import com.webapp.app_rest_api.exception.ResourceNotFoundException;
+import com.webapp.app_rest_api.model.entities.PersonalInfo;
 import com.webapp.app_rest_api.model.entities.Post;
 
-import java.time.Instant;
 import java.util.List;
 
 public interface IPostService {
-    public Post getPost(Long id);
+    Post getPost(PersonalInfo personalInfo, Long id);
 
-    public List<Post> getAllPost();
+    List<Post> getAllPost(PersonalInfo personalInfo);
 
-    public Post createPost(Post post);
+    Post createPost(PersonalInfo personalInfo, Post post);
 
-    public Post updatePost(Long id, Post post);
+    Post updatePost(PersonalInfo personalInfo, Long id, Post post);
 
-    public void deletePost(Long id);
+    void deletePost(PersonalInfo personalInfo, Long id);
 
-    public void deleteAllPost();
+    void deleteAllPost(PersonalInfo personalInfo);
 }

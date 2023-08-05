@@ -1,7 +1,6 @@
 package com.webapp.app_rest_api.service.impl;
 
 import com.webapp.app_rest_api.exception.ResourceNotFoundException;
-import com.webapp.app_rest_api.model.entities.DayDiet;
 import com.webapp.app_rest_api.model.entities.PersonalInfo;
 import com.webapp.app_rest_api.model.mapper.PersonalInfoMapper;
 import com.webapp.app_rest_api.repository.PersonalInfoRepository;
@@ -29,17 +28,16 @@ public class PersonalInfoService implements IPersonalInfoService {
 
     @Override
     public PersonalInfo createPersonalInfo(PersonalInfo personalInfo) {
-        DayDiet dayDiet = dayDietService.createUpdateDayDiet();
-        personalInfo.getDayDiets().add(dayDiet);
-        dayDiet.setPersonalInfo(personalInfo);
-        personalInfo.setDiet(dietService.createDiet(personalInfo));
+        personalInfoRepository.save(personalInfo);
+        dayDietService.createUpdateDayDiet(personalInfo);
+        personalInfo.setDiet(dietService.createCustomDiet(personalInfo));
         return personalInfoRepository.save(personalInfo);
     }
 
     @Override
-    public PersonalInfo getPersonalInfoById(Long id) {
-        return personalInfoRepository.findById(id).orElseThrow(()
-                -> new ResourceNotFoundException("Personal Info", "id", String.valueOf(id)));
+    public PersonalInfo getPersonalInfo(PersonalInfo personalInfo) {
+        return personalInfoRepository.findById(personalInfo.getId()).orElseThrow(()
+                -> new ResourceNotFoundException("Personal Info", "id", String.valueOf(personalInfo.getId())));
     }
 
     @Override
@@ -49,13 +47,17 @@ public class PersonalInfoService implements IPersonalInfoService {
 
     @Override
     public PersonalInfo updatePersonalInfo(Long id, PersonalInfo personalInfo) {
-        PersonalInfo personalInfoUpdated = getPersonalInfoById(id);
-        return personalInfoRepository.save(mapper.mapToPersonalInfo(personalInfoUpdated, personalInfo));
+        PersonalInfo personalInfoUpdated = personalInfoRepository.findById(id).orElseThrow(()
+                -> new ResourceNotFoundException("Personal Info", "id", String.valueOf(id)));
+        personalInfoRepository.save(mapper.mapToPersonalInfo(personalInfoUpdated, personalInfo));
+        dietService.countDiet(personalInfoUpdated, personalInfoUpdated.getDiet());
+        return personalInfoUpdated;
     }
 
     @Override
     public PersonalInfo deletePersonalInfo(Long id) {
-        PersonalInfo personalInfo = getPersonalInfoById(id);
+        PersonalInfo personalInfo = personalInfoRepository.findById(id).orElseThrow(()
+                -> new ResourceNotFoundException("Personal Info", "id", String.valueOf(id)));
         personalInfoRepository.deleteById(id);
         return personalInfo;
     }

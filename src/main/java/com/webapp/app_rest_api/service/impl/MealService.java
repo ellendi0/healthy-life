@@ -15,17 +15,20 @@ import java.util.*;
 @Service
 public class MealService implements IMealService {
     private final MealRepository mealRepository;
+    private final DayDietRepository dayDietRepository;
     private final FoodService foodService;
     private final RecipeService recipeService;
     private final FoodToMealService foodToMealService;
     private final RecipeToMealService recipeToMealService;
 
     public MealService(MealRepository mealRepository,
+                       DayDietRepository dayDietRepository,
                        FoodService foodService,
                        RecipeService recipeService,
                        FoodToMealService foodToMealService,
                        RecipeToMealService recipeToMealService) {
         this.mealRepository = mealRepository;
+        this.dayDietRepository = dayDietRepository;
         this.foodService = foodService;
         this.recipeService = recipeService;
         this.foodToMealService = foodToMealService;
@@ -33,31 +36,42 @@ public class MealService implements IMealService {
     }
 
     @Override
-    public Meal createUpdateMeal(Meal meal) {
+    public Meal createSaveMeal(Meal meal) {
         return mealRepository.save(meal);
     }
 
-    public Meal getMeal(Long id) {
+    @Override
+    public Meal getMealByUserAndMealId(PersonalInfo personalInfo, Long mealId) {
+        return mealRepository.findMealByPersonalInfo(personalInfo.getId(), mealId).orElseThrow(()
+                -> new ResourceNotFoundException("Meal", "id", String.valueOf(mealId)));
+    }
+
+    @Override
+    public Meal getMealById(Long id) {
         return mealRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Meal", "id", String.valueOf(id)));
     }
 
     @Override
-    public Meal createMeal(TypeOfMeal typeOfMeal) {
+    public Meal createSaveMeal(DayDiet dayDiet, TypeOfMeal typeOfMeal) {
         Meal meal = new Meal();
+        meal.setDayDiet(dayDiet);
         meal.setTypeOfMeal(typeOfMeal);
-        return createUpdateMeal(meal);
+        return mealRepository.save(meal);
     }
 
     @Override
-    public List<Meal> getAllMeals() {
-        return mealRepository.findAll();
+    public List<Meal> getAllMealsByDayDiet(PersonalInfo personalInfo, Long dayDietId) {
+        DayDiet dayDiet = dayDietRepository.findDayDietByIdAndPersonalInfo_Id(dayDietId, personalInfo.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("DayDiet", "id", String.valueOf(dayDietId)));
+
+        return mealRepository.findAllByDayDiet(dayDiet);
     }
 
     @Override
     @Transactional
-    public Meal addFoodToMeal(Long mealId, Long foodId, Double weight) {
-        Meal meal = getMeal(mealId);
+    public Meal addFoodToMeal(PersonalInfo personalInfo, Long mealId, Long foodId, Double weight) {
+        Meal meal = getMealByUserAndMealId(personalInfo, mealId);
         FoodToMeal foodToMeal = foodToMealService.getFoodToMealById(mealId, foodId);
 
         if (Objects.isNull(foodToMeal)) {
@@ -70,52 +84,54 @@ public class MealService implements IMealService {
         }
 
         foodToMealService.createUpdateFoodToMeal(foodToMeal);
-        createUpdateMeal(meal);
-        return meal;
+        return createSaveMeal(meal);
     }
 
     @Override
     @Transactional
-    public Meal addRecipeToMeal(Long mealId, Long recipeId, Double weight) {
-        Meal meal = getMeal(mealId);
-
+    public Meal addRecipeToMeal(PersonalInfo personalInfo, Long mealId, Long recipeId, Double weight) {
+        Meal meal = getMealByUserAndMealId(personalInfo, mealId);
         RecipeToMeal recipeToMeal = recipeToMealService.getRecipeByMealIdAndRecipeId(mealId, recipeId);
 
         if (Objects.isNull(recipeToMeal)) {
-            Recipe recipe = recipeService.getRecipe(recipeId);
+            Recipe recipe = recipeService.getRecipeById(personalInfo, recipeId);
             recipeToMeal = new RecipeToMeal(recipe, meal, weight);
             meal.getRecipe().add(recipeToMeal);
             recipe.getMeal().add(recipeToMeal);
         } else {
             recipeToMeal.setWeight(recipeToMeal.getWeight() + weight);
         }
-        recipeToMealService.createUpdateRecipeToMeal(recipeToMeal);
-        createUpdateMeal(meal);
-        return meal;
+
+        recipeToMealService.createSaveRecipeToMeal(recipeToMeal);
+        return createSaveMeal(meal);
     }
 
     @Override
-    public Meal updateFoodInMeal(Long mealId, Long foodId, Double weight) {
-        foodToMealService.updateFoodToMeal(mealId, foodId, weight);
-        return getMeal(mealId);
+    public Meal updateFoodInMeal(PersonalInfo personalInfo, Long mealId, Long foodId, Double weight) {
+        return foodToMealService.updateFoodToMeal(getMealByUserAndMealId(personalInfo, mealId).getId(), foodId, weight);
     }
 
     @Override
-    public Meal updateRecipeInMeal(Long mealId, Long recipeId, Double weight) {
-        recipeToMealService.updateRecipeToMeal(mealId, recipeId, weight);
-        return getMeal(mealId);
-    }
-
-    @Override
-    @Transactional
-    public void deleteFoodFromMeal(Long mealId, Long foodId) {
-        foodToMealService.deleteFoodToMeal(mealId, foodId);
+    public Meal updateRecipeInMeal(PersonalInfo personalInfo, Long mealId, Long recipeId, Double weight) {
+        return recipeToMealService.updateRecipeToMeal(getMealByUserAndMealId(
+                personalInfo, mealId).getId(), recipeId, weight
+        );
     }
 
     @Override
     @Transactional
-    public void deleteRecipeFromMeal(Long mealId, Long recipeId) {
-        recipeToMealService.deleteByMealIdAndRecipeId(mealId, recipeId);
+    public void deleteFoodFromMeal(PersonalInfo personalInfo, Long mealId, Long foodId) {
+        foodToMealService.deleteFoodByMealIdAndFoodId(
+                getMealByUserAndMealId(personalInfo, mealId).getId(), foodId
+        );
+    }
+
+    @Override
+    @Transactional
+    public void deleteRecipeFromMeal(PersonalInfo personalInfo, Long mealId, Long recipeId) {
+        recipeToMealService.deleteRecipeByMealIdAndRecipeId(
+                getMealByUserAndMealId(personalInfo, mealId).getId(), recipeId
+        );
     }
 
     @Override

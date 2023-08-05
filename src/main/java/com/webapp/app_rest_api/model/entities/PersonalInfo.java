@@ -4,14 +4,16 @@ import com.webapp.app_rest_api.model.enums.Activity;
 import com.webapp.app_rest_api.model.enums.Gender;
 import com.webapp.app_rest_api.model.enums.Goal;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @Entity
 @Table(name = "personal_info")
@@ -21,24 +23,24 @@ public class PersonalInfo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, name = "weight")
+    @Column(name = "weight")
     private Double weight;
 
-    @Column(nullable = false, name = "height")
+    @Column(name = "height")
     private Double height;
 
-    @Column(nullable = false, name = "date_of_birth")
+    @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
-    @Column(nullable = false, name = "gender")
+    @Column(name = "gender")
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Column(nullable = false, name = "goal")
+    @Column(name = "goal")
     @Enumerated(EnumType.STRING)
     private Goal goal;
 
-    @Column(nullable = false, name = "activity")
+    @Column(name = "activity")
     @Enumerated(EnumType.STRING)
     private Activity activity;
 
@@ -49,6 +51,9 @@ public class PersonalInfo {
     @JoinColumn(name = "diet_id", referencedColumnName = "id")
     private Diet diet;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "personalInfo")
-    private List<DayDiet> dayDiets = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personalInfo")
+    private Set<DayDiet> dayDiets = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personalInfo")
+    private Set<Post> posts = new HashSet<>();
 }
