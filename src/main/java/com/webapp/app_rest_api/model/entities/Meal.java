@@ -54,7 +54,7 @@ public class Meal{
     private Set<RecipeToMeal> recipe = new HashSet<>();
 
     @ManyToOne
-    @JoinColumn(name = "diet_id", nullable = false)
+    @JoinColumn(name = "day_diet_id", nullable = false)
     private DayDiet dayDiet;
 
     @Override

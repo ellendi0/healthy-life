@@ -14,7 +14,6 @@ import java.time.LocalDate;
 
 @Service
 public class DietService implements IDietService {
-
     private final DietRepository dietRepository;
     private final GenderCoefficientService genderCoefficientService;
     private final DietMapper mapper;
@@ -28,16 +27,21 @@ public class DietService implements IDietService {
     }
 
     @Override
-    public Diet createDiet(PersonalInfo personalInfo) {
-        Diet diet = new Diet();
-        personalInfo.setDiet(diet);
+    public Diet createCustomDiet(PersonalInfo personalInfo) {
+        Diet diet = dietRepository.save(new Diet());
         diet.setPersonalInfo(personalInfo);
+        return dietRepository.save(diet);
+    }
+
+    @Override
+    public Diet createCustomDiet(PersonalInfo personalInfo, Diet diet) {
         return dietRepository.save(countDiet(personalInfo, diet));
     }
 
     @Override
-    public Diet createUpdateDiet(Diet diet) {
-        return dietRepository.save(diet);
+    public Diet getDietByUser(PersonalInfo personalInfo) {
+        return dietRepository.findById(personalInfo.getDiet().getId()).orElseThrow(()
+                -> new ResourceNotFoundException("Diet", "id", String.valueOf(personalInfo.getDiet().getId())));
     }
 
     @Override
@@ -47,8 +51,8 @@ public class DietService implements IDietService {
     }
 
     @Override
-    public Diet updateDiet(Long id, Double calories) {
-        Diet updatedDiet = getDietById(id);
+    public Diet updateDiet(PersonalInfo personalInfo, Double calories) {
+        Diet updatedDiet = getDietById(personalInfo.getDiet().getId());
         return dietRepository.save(mapper.map(updatedDiet, calories));
     }
 
@@ -61,6 +65,7 @@ public class DietService implements IDietService {
 
     public Diet countDiet(PersonalInfo personalInfo, Diet diet) {
         double bmr;
+        double calories;
         int currentYear = LocalDate.now().getYear();
         GenderCoefficient genderCoefficient = genderCoefficientService
                 .getGenderCoefficientByGender(personalInfo.getGender());
@@ -71,7 +76,7 @@ public class DietService implements IDietService {
                 - (genderCoefficient.getBmr_age_coefficient()
                 * (currentYear - personalInfo.getDateOfBirth().getYear())), 3);
 
-        bmr = bmr * personalInfo.getActivity().getALF() * personalInfo.getGoal().getCaloriesByGoal();
-        return dietRepository.save(mapper.map(diet, bmr));
+        calories = bmr * personalInfo.getActivity().getALF() * personalInfo.getGoal().getCaloriesByGoal();
+        return dietRepository.save(mapper.map(diet, bmr + calories));
     }
 }

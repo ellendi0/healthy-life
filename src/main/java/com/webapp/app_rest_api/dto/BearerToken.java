@@ -1,15 +1,12 @@
 package com.webapp.app_rest_api.dto;
 
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class BearerToken {
-
-    private String accessToken ;
-    private String tokenType ;
-
-    public BearerToken(String accessToken , String tokenType) {
-        this.tokenType = tokenType ;
-        this.accessToken = accessToken;
-    }
+    private String accessToken;
+    private String tokenType = "Bearer";
 }

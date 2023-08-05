@@ -10,8 +10,6 @@ import java.time.Instant;
 @Table(name = "posts")
 
 public class Post {
-    //java.util.Date date = new java.util.Date();
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,5 +23,7 @@ public class Post {
     @Column(name = "date", nullable = false)
     private Instant date;
 
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "personal_info_id", nullable = false)
+    private PersonalInfo personalInfo;
 }

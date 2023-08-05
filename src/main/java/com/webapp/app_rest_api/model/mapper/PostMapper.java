@@ -2,7 +2,6 @@ package com.webapp.app_rest_api.model.mapper;
 
 import com.webapp.app_rest_api.dto.PostDto;
 import com.webapp.app_rest_api.model.entities.Post;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;

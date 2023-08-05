@@ -1,11 +1,11 @@
 package com.webapp.app_rest_api.controller;
 
+import com.webapp.app_rest_api.dto.BearerToken;
 import com.webapp.app_rest_api.dto.LoginDto;
 import com.webapp.app_rest_api.dto.RegisterDto;
 import com.webapp.app_rest_api.service.impl.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,12 +18,17 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody RegisterDto registerDto) {
+    public String register(@Valid @RequestBody RegisterDto registerDto) {
         return userService.register(registerDto);
     }
 
-    @PostMapping("/authenticate")
-    public String authenticate(@Valid @RequestBody LoginDto loginDto) {
-        return userService.authenticate(loginDto);
+    @PostMapping("/login")
+    public BearerToken login(@Valid @RequestBody LoginDto loginDto) {
+        String token = userService.authenticate(loginDto);
+
+        BearerToken bearerToken = new BearerToken();
+        bearerToken.setAccessToken(token);
+
+        return bearerToken;
     }
 }

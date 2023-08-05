@@ -2,13 +2,16 @@ package com.webapp.app_rest_api.controller;
 
 import com.webapp.app_rest_api.controller.facade.MealFacade;
 import com.webapp.app_rest_api.dto.MealDto;
+import com.webapp.app_rest_api.model.entities.User;
 import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/meal")
+@RequestMapping("/api/user/meal")
 public class MealController {
     private final MealFacade mealFacade;
 
@@ -16,62 +19,80 @@ public class MealController {
         this.mealFacade = mealFacade;
     }
 
-    @GetMapping("/{id}")
-    public MealDto getMeal(@PathVariable Long id){
-        return mealFacade.getMeal(id);
+    @GetMapping("/dayDiet/{dayDietId}")
+    public List<MealDto> getAllMeal(@AuthenticationPrincipal User user,
+                                    @PathVariable Long dayDietId){
+        return mealFacade.getAllMeals(user, dayDietId);
     }
 
-    @GetMapping
-    public List<MealDto> getAllMeal(){
-        return mealFacade.getAllMeals();
+    @GetMapping("{mealId}")
+    public MealDto getMealById(@AuthenticationPrincipal User user,
+                                     @PathVariable Long mealId){
+        return mealFacade.getMealByUserAndMealId(user, mealId);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
     public MealDto createMeal(@Valid @RequestBody MealDto mealDto){
         return mealFacade.createUpdateMeal(mealDto);
     }
 
-    @PostMapping({"/{mealId}/addfood/{foodId}/{weight}"})
-    public MealDto addFoodToMeal(@PathVariable Long mealId, @PathVariable Long foodId, @PathVariable Double weight){
-        return mealFacade.addFoodToMeal(mealId, foodId, weight);
+    @PostMapping("{mealId}/addFood/{foodId}")
+    public MealDto addFoodToMeal(@AuthenticationPrincipal User user,
+                                 @PathVariable(value = "mealId") Long mealId,
+                                 @PathVariable(value = "foodId") Long foodId,
+                                 @RequestParam(value = "weight") Double weight){
+        return mealFacade.addFoodToMeal(user, mealId, foodId, weight);
     }
 
-    @PostMapping({"/{mealId}/addrecipe/{recipeId}/{weight}"})
-    public MealDto addRecipeToMeal(@PathVariable Long mealId, @PathVariable Long recipeId, @PathVariable Double weight){
-        return mealFacade.addRecipeToMeal(mealId, recipeId, weight);
+    @PostMapping({"{mealId}/addRecipe/{recipeId}"})
+    public MealDto addRecipeToMeal(@AuthenticationPrincipal User user,
+                                   @PathVariable(value = "mealId") Long mealId,
+                                   @PathVariable(value = "recipeId") Long recipeId,
+                                   @RequestParam(value = "weight") Double weight){
+        return mealFacade.addRecipeToMeal(user, mealId, recipeId, weight);
     }
 
-    @PutMapping("/{mealId}/changerecipe/{recipeId}/{weight}")
-    public MealDto changeRecipeInMeal(@PathVariable Long mealId, @PathVariable Long recipeId, @PathVariable Double weight){
-        return mealFacade.updateRecipeInMeal(mealId, recipeId, weight);
+    @PutMapping("{mealId}/changeRecipe/{recipeId}")
+    public MealDto changeRecipeInMeal(@AuthenticationPrincipal User user,
+                                      @PathVariable Long mealId,
+                                      @PathVariable Long recipeId,
+                                      @RequestParam(value = "weight") Double weight){
+        return mealFacade.updateRecipeInMeal(user, mealId, recipeId, weight);
     }
 
-    @PutMapping("/{mealId}/changefood/{foodId}/{weight}")
-    public MealDto changeFoodInMeal(@PathVariable Long mealId, @PathVariable Long foodId, @PathVariable Double weight){
-        return mealFacade.updateFoodInMeal(mealId, foodId, weight);
+    @PutMapping("{mealId}/changeFood/{foodId}")
+    public MealDto changeFoodInMeal(@AuthenticationPrincipal User user,
+                                    @PathVariable Long mealId,
+                                    @PathVariable Long foodId,
+                                    @RequestParam(value = "weight") Double weight){
+        return mealFacade.updateFoodInMeal(user, mealId, foodId, weight);
     }
 
-    @DeleteMapping("/{mealId}/deleterecipe/{recipeId}")
-    public MealDto deleteRecipeFromMeal(@PathVariable Long mealId, @PathVariable Long recipeId){
-        System.out.println("The recipe with id " + recipeId + " was deleted from meal");
-        return mealFacade.deleteRecipeFromMeal(mealId, recipeId);
+    @DeleteMapping("{mealId}/deleteRecipe{recipeId}")
+    public MealDto deleteRecipeFromMeal(@AuthenticationPrincipal User user,
+                                        @PathVariable Long mealId,
+                                        @PathVariable Long recipeId){
+        return mealFacade.deleteRecipeFromMeal(user, mealId, recipeId);
     }
 
-    @DeleteMapping({"/{mealId}/deletefood/{foodId}"})
-    public MealDto deleteFoodFromMeal(@PathVariable Long mealId, @PathVariable Long foodId){
-        System.out.println("The food with id " + foodId + " was deleted from meal");
-        return mealFacade.deleteFoodFromMeal(mealId, foodId);
+    @DeleteMapping({"{mealId}/deleteFood/{foodId}"})
+    public MealDto deleteFoodFromMeal(@AuthenticationPrincipal User user,
+                                      @PathVariable Long mealId,
+                                      @PathVariable Long foodId){
+        return mealFacade.deleteFoodFromMeal(user, mealId, foodId);
     }
 
-    @DeleteMapping("/{id}")
-    public MealDto deleteMeal(@PathVariable Long id){
-        System.out.println("The meal with id " + id + " was deleted");
-        return mealFacade.deleteMeal(id);
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @DeleteMapping("{mealId}")
+    public MealDto deleteMeal(@AuthenticationPrincipal User user,
+                              @PathVariable Long mealId){
+        return mealFacade.deleteMeal(user, mealId);
     }
 
-    @DeleteMapping("/deleteall")
-    public String deleteAllMeals(){
-        mealFacade.deleteAllMeals();
-        return ("All meals are successfully deleted");
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @DeleteMapping("/deleteAll")
+    public String deleteAllMeals() {
+        return mealFacade.deleteAllMeals();
     }
 }

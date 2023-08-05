@@ -3,7 +3,6 @@ package com.webapp.app_rest_api.model.entities.connection;
 import com.webapp.app_rest_api.model.entities.Meal;
 import com.webapp.app_rest_api.model.entities.Recipe;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

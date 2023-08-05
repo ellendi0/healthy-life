@@ -3,7 +3,9 @@ package com.webapp.app_rest_api.controller;
 
 import com.webapp.app_rest_api.controller.facade.PostFacade;
 import com.webapp.app_rest_api.dto.PostDto;
+import com.webapp.app_rest_api.model.entities.User;
 import jakarta.validation.Valid;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,35 +19,38 @@ public class PostController {
         this.postFacade = postFacade;
     }
 
-    @GetMapping("/{id}")
-    public PostDto getPostById(@PathVariable Long id){
-        return postFacade.getPost(id);
+    @GetMapping("{id}")
+    public PostDto getPostById(@AuthenticationPrincipal User user,
+                               @PathVariable Long id){
+        return postFacade.getPost(user, id);
     }
 
     @GetMapping
-    public List<PostDto> getAllPost(){
-        return postFacade.getAllPost();
+    public List<PostDto> getAllPost(@AuthenticationPrincipal User user){
+        return postFacade.getAllPost(user);
     }
 
     @PostMapping
-    public PostDto createPost(@Valid @RequestBody PostDto postDto){
-        return postFacade.createPost(postDto);
+    public PostDto createPost(@AuthenticationPrincipal User user,
+                              @Valid @RequestBody PostDto postDto){
+        return postFacade.createPost(user, postDto);
     }
 
-    @PutMapping("/{id}")
-    public PostDto updatePost(@Valid@PathVariable Long id, @RequestBody PostDto postDto){
-        return postFacade.updatePost(id, postDto);
+    @PutMapping("{id}")
+    public PostDto updatePost(@AuthenticationPrincipal User user,
+                              @Valid @PathVariable Long id,
+                              @RequestBody PostDto postDto){
+        return postFacade.updatePost(user, id, postDto);
     }
 
-    @DeleteMapping("/{id}")
-    public PostDto deletePost(@PathVariable Long id){
-        System.out.println("The post with id " + id + " was deleted.");
-        return postFacade.deletePost(id);
+    @DeleteMapping("{id}")
+    public PostDto deletePost(@AuthenticationPrincipal User user,
+                              @PathVariable Long id){
+        return postFacade.deletePost(user, id);
     }
 
     @DeleteMapping
-    public String deleteAllPost(){
-        postFacade.deleteAllPost();
-        return ("All posts are successfully deleted");
+    public String deleteAllPost(@AuthenticationPrincipal User user){
+        return postFacade.deleteAllPost(user);
     }
 }

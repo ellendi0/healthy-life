@@ -16,13 +16,7 @@ public class RecipeMapper {
     public Recipe mapToEntity(RecipeDto recipeDto) {
         Recipe recipe = new Recipe();
         recipe.setName(recipeDto.getName());
-        recipe.setNumberOfCalories(recipeDto.getNumberOfCalories());
-        recipe.setNumberOfProtein(recipeDto.getNumberOfProtein());
-        recipe.setNumberOfFat(recipeDto.getNumberOfFat());
-        recipe.setNumberOfCarbohydrate(recipeDto.getNumberOfCarbohydrate());
-        recipe.setNumberOfSugar(recipeDto.getNumberOfSugar());
-        recipe.setNumberOfFiber(recipeDto.getNumberOfFiber());
-        recipe.setWeight(recipeDto.getWeight());
+        recipe.setRecipeAccess(recipeDto.getRecipeAccess());
         return recipe;
     }
 
@@ -36,6 +30,7 @@ public class RecipeMapper {
         recipeDto.setNumberOfSugar(recipe.getNumberOfSugar());
         recipeDto.setNumberOfFiber(recipe.getNumberOfFiber());
         recipeDto.setWeight(recipe.getWeight());
+        recipeDto.setRecipeAccess(recipe.getRecipeAccess());
         recipeDto.getFood().addAll(mapFoodToFoodDTO(recipe.getFood()));
         return recipeDto;
     }
@@ -74,6 +69,7 @@ public class RecipeMapper {
         recipeDto.setNumberOfSugar(DoubleRounder.round(recipe.getNumberOfSugar() * weight / 100, 3));
         recipeDto.setNumberOfFiber(DoubleRounder.round(recipe.getNumberOfFiber() * weight / 100, 3));
         recipeDto.setWeight(weight);
+        recipeDto.setRecipeAccess(recipe.getRecipeAccess());
         recipeDto.getFood().addAll(mapFoodToFoodDTO(recipe.getFood()));
         return recipeDto;
     }

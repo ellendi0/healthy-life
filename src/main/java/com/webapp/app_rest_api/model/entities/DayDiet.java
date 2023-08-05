@@ -23,28 +23,28 @@ public class DayDiet {
     @Column(nullable = false, name = "date")
     private LocalDate date;
 
-    @Column(nullable = false, name = "number_of_daily_calories")
+    @Column(name = "number_of_daily_calories")
     private double totalNumberOfDailyCalories;
 
-    @Column(nullable = false, name = "number_of_protein")
+    @Column(name = "number_of_protein")
     private double totalNumberOfProtein;
 
-    @Column(nullable = false, name = "number_of_fat")
+    @Column(name = "number_of_fat")
     private double totalNumberOfFat;
 
-    @Column(nullable = false, name = "number_of_carbohydrate")
+    @Column(name = "number_of_carbohydrate")
     private double totalNumberOfCarbohydrate;
 
-    @Column(nullable = false, name = "number_of_sugar")
+    @Column(name = "number_of_sugar")
     private double totalNumberOfSugar;
 
-    @Column(nullable = false, name = "number_of_fiber")
+    @Column(name = "number_of_fiber")
     private double totalNumberOfFiber;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "personal_info_id", nullable = false)
     private PersonalInfo personalInfo;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "dayDiet")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "dayDiet")
     private List<Meal> meals = new ArrayList<>();
 }

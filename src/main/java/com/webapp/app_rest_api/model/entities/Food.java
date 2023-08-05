@@ -15,7 +15,7 @@ import java.util.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "food")
-//ставити всюди назви колонок
+
 public class Food{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -2,6 +2,7 @@ package com.webapp.app_rest_api.controller.facade;
 
 import com.webapp.app_rest_api.dto.PersonalInfoDto;
 import com.webapp.app_rest_api.model.entities.PersonalInfo;
+import com.webapp.app_rest_api.model.entities.User;
 import com.webapp.app_rest_api.model.mapper.PersonalInfoMapper;
 import com.webapp.app_rest_api.service.impl.PersonalInfoService;
 import org.springframework.stereotype.Component;
@@ -21,19 +22,21 @@ public class PersonalInfoFacade {
                 personalInfoMapper.mapToEntity(personalInfoDto)));
     }
 
-    public PersonalInfoDto getPersonalInfoById(Long id) {
-        return personalInfoMapper.mapToDto(personalInfoService.getPersonalInfoById(id));
+    public PersonalInfoDto getPersonalInfo(User user) {
+        return personalInfoMapper.mapToDto(personalInfoService.getPersonalInfo(user.getPersonalInfo()));
     }
 
-    public PersonalInfoDto updatePersonalInfo(Long id, PersonalInfo personalInfo) {
-        return personalInfoMapper.mapToDto(personalInfoService.updatePersonalInfo(id, personalInfo));
+    public PersonalInfoDto updatePersonalInfo(User user, PersonalInfoDto personalInfoDto) {
+        return personalInfoMapper.mapToDto(personalInfoService.updatePersonalInfo(
+                user.getPersonalInfo().getId(), personalInfoMapper.mapToEntity(personalInfoDto)));
     }
 
     public PersonalInfoDto deletePersonalInfo(Long id) {
+        System.out.println("The personal info with id " + id + " has been deleted.");
         return personalInfoMapper.mapToDto(personalInfoService.deletePersonalInfo(id));
     }
 
-    public PersonalInfoDto getPersonalInfoByUserId(Long userId) {
-        return personalInfoMapper.mapToDto(personalInfoService.getPersonalInfoByUserId(userId));
+    public PersonalInfoDto getPersonalInfoByUserId(Long id) {
+        return personalInfoMapper.mapToDto(personalInfoService.getPersonalInfoByUserId(id));
     }
 }

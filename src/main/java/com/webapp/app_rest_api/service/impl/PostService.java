@@ -1,6 +1,7 @@
 package com.webapp.app_rest_api.service.impl;
 
 import com.webapp.app_rest_api.exception.ResourceNotFoundException;
+import com.webapp.app_rest_api.model.entities.PersonalInfo;
 import com.webapp.app_rest_api.model.mapper.PostMapper;
 import com.webapp.app_rest_api.model.entities.Post;
 import com.webapp.app_rest_api.repository.PostRepository;
@@ -21,35 +22,36 @@ public class PostService implements IPostService {
     }
 
     @Override
-    public Post getPost(Long id) {
-        return postRepository.findById(id)
+    public Post getPost(PersonalInfo personalInfo, Long id) {
+        return postRepository.findByPersonalInfo_IdAndId(personalInfo.getId(), id)
                 .orElseThrow(() -> new ResourceNotFoundException("Post", "id", String.valueOf(id)));
     }
 
     @Override
-    public List<Post> getAllPost() {
+    public List<Post> getAllPost(PersonalInfo personalInfo) {
         return postRepository.findAll();
     }
 
     @Override
-    public Post createPost(Post post) {
+    public Post createPost(PersonalInfo personalInfo, Post post) {
+        post.setPersonalInfo(personalInfo);
         post.setDate(Instant.now());
         return postRepository.save(post);
     }
 
     @Override
-    public Post updatePost(Long id, Post post) {
-        Post postUpdated = getPost(id);
+    public Post updatePost(PersonalInfo personalInfo, Long id, Post post) {
+        Post postUpdated = getPost(personalInfo, id);
         return postRepository.save(mapper.map(post, postUpdated));
     }
 
     @Override
-    public void deletePost(Long id) {
-        postRepository.deleteById(id);
+    public void deletePost(PersonalInfo personalInfo, Long id) {
+        postRepository.delete(getPost(personalInfo, id));
     }
 
     @Override
-    public void deleteAllPost() {
-        postRepository.deleteAll();
+    public void deleteAllPost(PersonalInfo personalInfo) {
+        postRepository.deleteAllByPersonalInfo_Id(personalInfo.getId());
     }
 }

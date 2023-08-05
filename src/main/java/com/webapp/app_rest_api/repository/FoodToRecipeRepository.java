@@ -9,6 +9,6 @@ import java.util.Optional;
 @Repository
 public interface FoodToRecipeRepository extends JpaRepository<FoodToRecipe, Long> {
     Optional<FoodToRecipe> getFoodToRecipeByRecipeIdAndFoodId(Long recipeId, Long foodId);
-    void deleteFoodToRecipeByRecipeIdAndFoodId(Long recipeId, Long foodId);
-    Boolean existsByRecipeIdAndFoodId(Long recipeId, Long foodId);
+    void deleteFoodToRecipeByRecipe_IdAndFood_Id(Long recipeId, Long foodId);
+    Boolean existsByRecipe_IdAndFood_Id(Long recipeId, Long foodId);
 }

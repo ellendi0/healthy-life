@@ -2,8 +2,10 @@ package com.webapp.app_rest_api.service.impl;
 
 import com.webapp.app_rest_api.exception.ResourceNotFoundException;
 import com.webapp.app_rest_api.model.entities.Food;
+import com.webapp.app_rest_api.model.entities.PersonalInfo;
 import com.webapp.app_rest_api.model.entities.connection.FoodToRecipe;
 import com.webapp.app_rest_api.model.entities.Recipe;
+import com.webapp.app_rest_api.model.enums.RecipeAccess;
 import com.webapp.app_rest_api.repository.RecipeRepository;
 import com.webapp.app_rest_api.service.IRecipeService;
 import org.springframework.stereotype.Service;
@@ -27,25 +29,65 @@ public class RecipeService implements IRecipeService {
     }
 
     @Override
-    public Recipe getRecipe(Long id) {
-        return recipeRepository.findById(id).orElseThrow(()
-                -> new ResourceNotFoundException("Recipe", "id", String.valueOf(id)));
+    public Recipe getRecipeForUser(PersonalInfo personalInfo, Long id) {
+        return recipeRepository.findByPersonalInfo_IdAndId(personalInfo.getId(), id)
+                .orElseThrow(() -> new ResourceNotFoundException("Recipe", "id", String.valueOf(id)));
     }
 
     @Override
-    public List<Recipe> getAllRecipe() {
-        return recipeRepository.findAll();
-    }
-
-    @Override
-    public Recipe createUpdateRecipe(Recipe recipe) {
+    public Recipe createRecipe(PersonalInfo personalInfo, Recipe recipe) {
+        recipe.setPersonalInfo(personalInfo);
+        recipe.setName(recipe.getName());
         return recipeRepository.save(recipe);
     }
 
     @Override
+    public Recipe createSaveRecipe(Recipe recipe) {
+        return recipeRepository.save(recipe);
+    }
+
+    @Override
+    public Recipe getPublicRecipe(Long id) {
+        return recipeRepository.findByIdAndRecipeAccess(id, RecipeAccess.PUBLIC)
+                .orElseThrow(() -> new ResourceNotFoundException("Recipe", "id", String.valueOf(id)));
+    }
+
+    @Override
+    public Recipe getRecipe(Long id) {
+        return recipeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Recipe", "id", String.valueOf(id)));
+    }
+
+    public Recipe getRecipeById(PersonalInfo personalInfo, Long id){
+        if(recipeRepository.existsByIdAndRecipeAccess(id, RecipeAccess.PUBLIC)){
+            return getPublicRecipe(id);
+        } else if(recipeRepository.existsByPersonalInfo_IdAndId(personalInfo.getId(), id)){
+            return getRecipeForUser(personalInfo, id);
+        }else{
+            throw new ResourceNotFoundException("Recipe", "id", String.valueOf(id));
+        }
+    }
+
+    @Override
+    public Recipe getRecipeByIdForUser(PersonalInfo personalInfo, Long id) {
+        return recipeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Recipe", "id", String.valueOf(id)));
+    }
+
+    @Override
+    public List<Recipe> getAllRecipe(PersonalInfo personalInfo) {
+        return recipeRepository.findAllByPersonalInfo_Id(personalInfo.getId());
+    }
+
+    @Override
+    public List<Recipe> getAllPublicRecipe() {
+        return recipeRepository.findAllByRecipeAccess(RecipeAccess.PUBLIC).stream().toList();
+    }
+
+    @Override
     @Transactional
-    public Recipe addFoodToRecipe(Long recipeId, Long foodId, Double weight) {
-        Recipe recipe = getRecipe(recipeId);
+    public Recipe addFoodToRecipe(PersonalInfo personalInfo, Long recipeId, Long foodId, Double weight) {
+        Recipe recipe = getRecipeForUser(personalInfo, recipeId);
         FoodToRecipe foodToRecipe = foodToRecipeService.getFoodByRecipeIdAndFoodId(recipeId, foodId);
 
         if (Objects.isNull(foodToRecipe)) {
@@ -62,31 +104,32 @@ public class RecipeService implements IRecipeService {
     }
 
     @Override
-    public Recipe updateRecipe(Long recipeId, Recipe recipe) {
-        Recipe recipeNew = getRecipe(recipeId);
+    public Recipe updateRecipe(PersonalInfo personalInfo, Long recipeId, Recipe recipe) {
+        Recipe recipeNew = getRecipeForUser(personalInfo, recipeId);
         recipeNew.setName(recipe.getName());
+        recipeNew.setRecipeAccess(recipe.getRecipeAccess());
         return recipeRepository.save(recipeNew);
     }
 
     @Override
-    public Recipe updateFoodInRecipe(Long recipeId, Long foodId, Double weight) {
-        foodToRecipeService.updateFoodToRecipe(recipeId, foodId, weight);
-        return getRecipe(recipeId);
+    public Recipe updateFoodInRecipe(PersonalInfo personalInfo, Long recipeId, Long foodId, Double weight) {
+        return foodToRecipeService.updateFoodToRecipe(recipeId, foodId, weight);
     }
 
     @Override
-    public void deleteRecipe(Long id) {
-        recipeRepository.deleteById(id);
+    public void deleteRecipe(PersonalInfo personalInfo, Long id) {
+        recipeRepository.deleteByPersonalInfo_IdAndId(personalInfo.getId(), id);
     }
 
     @Override
-    public void deleteAllRecipe() {
-        recipeRepository.deleteAll();
+    public void deleteAllRecipe(PersonalInfo personalInfo) {
+        recipeRepository.deleteAllByPersonalInfo_Id(personalInfo.getId());
     }
 
     @Override
     @Transactional
-    public void deleteFoodFromRecipe(Long recipeId, Long foodId) {
-        foodToRecipeService.deleteByRecipeIdAndFoodId(recipeId, foodId);
+    public void deleteFoodFromRecipe(PersonalInfo personalInfo, Long recipeId, Long foodId) {
+        foodToRecipeService.deleteByRecipeIdAndFoodId(
+                getRecipeForUser(personalInfo, recipeId).getId(), foodId);
     }
 }
